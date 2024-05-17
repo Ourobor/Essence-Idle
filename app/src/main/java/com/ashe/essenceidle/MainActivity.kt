@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
-import java.util.Timer
-import java.util.TimerTask
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,15 +37,12 @@ class MainActivity : ComponentActivity() {
            is good form */
         val charState = CharacterState()
 
-        //Create a repeating function to serve as each state "tick"
-        val timer = Timer()
-        val updateTask = object : TimerTask() {
-            override fun run() {
-                //Handle the tick
-                charState.doTick()
-            }
-        }
-        timer.schedule(updateTask, 0, 1000)
+        val executor = Executors.newScheduledThreadPool(1)
+
+        executor.scheduleAtFixedRate({
+            //Do tick update
+            charState.doTick()
+        }, 0, 500, TimeUnit.MILLISECONDS) // 1 second interval
 
         setContent {
             //TODO: Update the theme. Manually setting it to always be darkmode is dumb.
@@ -75,11 +73,26 @@ fun MainElement(mutableCharState: CharacterState) {
             fontSize = 20.sp,
             text = "Essence Strength: ${mutableCharState.essenceStrength}")
         MeditateButton(onClick = {
-            mutableCharState.meditationTicksLeft = mutableCharState.meditationTicks
-        },
-            ticksLeft = mutableCharState.meditationTicksLeft
-        )
+                mutableCharState.meditationTicksLeft = mutableCharState.meditationTicks
+            },
+            ticksLeft = mutableCharState.meditationTicksLeft )
+        if(mutableCharState.flags.soulForgeUnlocked) {
+            Divider(
+                modifier = Modifier.padding(10.dp)
+            )
+            SoulForge()
+        }
     }
+}
+
+@Composable
+fun SoulForge(){
+    Text(
+        modifier = Modifier.padding(start = 10.dp),
+        text = "Soul Forge",
+        color = MaterialTheme.colorScheme.primary,
+        fontSize = 20.sp,
+    )
 }
 
 @Composable
@@ -114,6 +127,7 @@ fun GreetingPreview() {
         Column {
             MainElement(mutableCharState = characterState)
             MeditateButton(onClick = {}, ticksLeft = 3)
+            SoulForge()
         }
     }
 }
