@@ -1,4 +1,4 @@
-package com.ashe.essenceidle
+package com.ashe.essenceidle.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

@@ -1,4 +1,4 @@
-package com.ashe.essenceidle
+package com.ashe.essenceidle.model
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
