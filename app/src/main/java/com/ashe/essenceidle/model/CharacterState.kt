@@ -13,6 +13,7 @@ class CharacterState : RealmObject {
     var _id: ObjectId = ObjectId()
     var essenceStrength: Int = 0
     var soulForgeUnlocked: Boolean = false
+    var multipleActionsUnlocked: Boolean = false
 
     //TODO Check in on this to make sure there isn't a better way
     fun clone(): CharacterState {
@@ -21,6 +22,7 @@ class CharacterState : RealmObject {
         newCharacterState._id = this._id
         newCharacterState.essenceStrength = this.essenceStrength
         newCharacterState.soulForgeUnlocked = this.soulForgeUnlocked
+        newCharacterState.multipleActionsUnlocked = this.multipleActionsUnlocked
 
         return newCharacterState
     }

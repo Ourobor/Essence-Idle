@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ashe.essenceidle.model.task.EssenceAction
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.UpdatePolicy
@@ -24,16 +25,12 @@ class MainActivityViewModel : ViewModel() {
     //The character state
     private val _characterState = MutableStateFlow(CharacterState())
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
-
     //Realm database references
     private val config = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
-        .schemaVersion(2).build()
+        .schemaVersion(3).build()
     private val realm: Realm = Realm.open(config)
 
-    //How many ticks per meditation task
-    private val meditationTicks = 10
-    //How many ticks are left in the current meditation task
-    var meditationTicksLeft by mutableIntStateOf(0)
+    var essenceActions = mutableListOf<EssenceAction>()
 
     init {
         viewModelScope.launch {
@@ -52,30 +49,23 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
-    //TODO Gonna replace this in a bit
-    fun startMeditation(){
-        _characterState.update { characterState ->
-            val newState = characterState.clone()
-            meditationTicksLeft = meditationTicks
-            return@update newState
-        }
-    }
-
     /**
      * Execute one tick of simulation, updating the internal character state
      */
     fun doTick(){
         _characterState.update {characterState ->
-            Log.d("EssenceIdle", "ticks left $meditationTicksLeft")
+            Log.d("EssenceIdle", "essenceActions ${essenceActions.size}")
             val newState = characterState.clone()
-            //Handle Meditation Tasks
-            if (meditationTicksLeft > 0){
-                meditationTicksLeft--
-                //Check if we /just/ reached 0
-                if(meditationTicksLeft == 0){
-                    newState.essenceStrength += 10
+
+            //Handle EssenceActions
+            if(essenceActions.size > 0){
+                essenceActions[0].doTick()
+                if(essenceActions[0].isComplete()){
+                    essenceActions.removeFirst()
+                    //TODO check to make sure this actually gets garbage collected?
                 }
             }
+
             //if the soulForge hasn't been unlocked. Save cycles by nesting the second check only if
             //the soul forge isn't already unlocked, otherwise don't bother checking
             if (!newState.soulForgeUnlocked){

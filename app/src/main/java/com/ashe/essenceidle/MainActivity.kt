@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.ashe.essenceidle.model.CharacterState
 import com.ashe.essenceidle.model.MainActivityViewModel
 import com.ashe.essenceidle.ui.MainElement
-import com.ashe.essenceidle.ui.MeditateButton
 import com.ashe.essenceidle.ui.SoulForge
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
 import java.util.concurrent.Executors
@@ -65,7 +64,6 @@ fun GreetingPreview() {
         characterState.essenceStrength = 123
         Column {
             //MainElement(characterState = characterState)
-            MeditateButton(onClick = {}, ticksLeft = 3)
             SoulForge()
         }
     }
