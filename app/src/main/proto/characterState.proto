@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.ashe.essenceidle";
+option java_multiple_files = true;
+
+message CharacterState {
+  uint64 essenceStrength = 1;
+  uint32 meditationTicks = 2;
+  CharacterFlag flags = 3;
+}
+
+message CharacterFlag {
+  bool soulForgeUnlocked = 1;
+}

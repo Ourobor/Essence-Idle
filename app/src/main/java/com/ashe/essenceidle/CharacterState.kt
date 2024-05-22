@@ -1,37 +1,29 @@
 package com.ashe.essenceidle
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.Ignore
+import io.realm.kotlin.types.annotations.PrimaryKey
+import org.mongodb.kbson.ObjectId
 
-class CharacterState {
-    var essenceStrength by mutableStateOf(0)
-    val meditationTicks by mutableStateOf(10)
-    var meditationTicksLeft by mutableStateOf(0)
-    val flags = Flags()
+class CharacterState() : RealmObject {
+    @PrimaryKey
+    var _id: ObjectId = ObjectId()
+    var essenceStrength: Int = 0
+    var soulForgeUnlocked: Boolean = false
 
-    fun doTick(){
-        //Handle Meditation Tasks
-        if (meditationTicksLeft > 0){
-            meditationTicksLeft--
+    //TODO Check in on this to make sure there isn't a better way
+    fun clone(): CharacterState {
+        val newCharacterState = CharacterState()
 
-            //Check if we /just/ reached 0
-            if(meditationTicksLeft == 0){
-                essenceStrength += 10
-            }
-        }
+        newCharacterState._id = this._id
+        newCharacterState.essenceStrength = this.essenceStrength
+        newCharacterState.soulForgeUnlocked = this.soulForgeUnlocked
 
-        //if the soulForge hasn't been unlocked. Save cycles by nesting the second check only if
-        //the soul forge isn't already unlocked, otherwise don't bother checking
-        if (!flags.soulForgeUnlocked){
-            //check to see if the player has accumulated a decent amount of essence and unlock it
-            if (essenceStrength >= 50){
-                flags.soulForgeUnlocked = true
-            }
-        }
+        return newCharacterState
     }
-}
-
-class Flags {
-    var soulForgeUnlocked by mutableStateOf(false)
 }

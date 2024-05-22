@@ -1,8 +1,10 @@
 package com.ashe.essenceidle
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
@@ -29,32 +32,32 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
+    val viewModel: MainActivityViewModel by viewModels()
+    override fun onPause() {
+        viewModel.save()
+        super.onPause()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //Create the character state
-        /*TODO Verify that using this reference as well as the later mutableCharacterState
-           is good form */
-        val charState = CharacterState()
-
-        val executor = Executors.newScheduledThreadPool(1)
+        val executor = Executors.newScheduledThreadPool(2)
 
         executor.scheduleAtFixedRate({
             //Do tick update
-            charState.doTick()
+            viewModel.doTick()
         }, 0, 500, TimeUnit.MILLISECONDS) // 1 second interval
+
+        executor.scheduleAtFixedRate({
+            viewModel.save()
+        }, 0,30, TimeUnit.SECONDS)
 
         setContent {
             //TODO: Update the theme. Manually setting it to always be darkmode is dumb.
             EssenceIdleTheme (darkTheme = true) {
-                //Create a mutable reference to charState
-                val mutableCharState = remember { charState }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainElement(mutableCharState)
+                    MainElement(viewModel)
                 }
             }
         }
@@ -62,7 +65,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainElement(mutableCharState: CharacterState) {
+fun MainElement(viewModel: MainActivityViewModel) {
+    val characterState by viewModel.characterState.collectAsState()
     Column {
         Text(
             modifier = Modifier
@@ -71,12 +75,12 @@ fun MainElement(mutableCharState: CharacterState) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary,
             fontSize = 20.sp,
-            text = "Essence Strength: ${mutableCharState.essenceStrength}")
+            text = "Essence Strength: ${characterState.essenceStrength}")
         MeditateButton(onClick = {
-                mutableCharState.meditationTicksLeft = mutableCharState.meditationTicks
+                viewModel.startMeditation()
             },
-            ticksLeft = mutableCharState.meditationTicksLeft )
-        if(mutableCharState.flags.soulForgeUnlocked) {
+            ticksLeft = viewModel.meditationTicksLeft )
+        if(characterState.soulForgeUnlocked) {
             Divider(
                 modifier = Modifier.padding(10.dp)
             )
@@ -125,7 +129,7 @@ fun GreetingPreview() {
         val characterState = CharacterState()
         characterState.essenceStrength = 123
         Column {
-            MainElement(mutableCharState = characterState)
+            //MainElement(characterState = characterState)
             MeditateButton(onClick = {}, ticksLeft = 3)
             SoulForge()
         }
