@@ -1,7 +1,6 @@
 package com.ashe.essenceidle
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -12,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,7 +31,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
-    val viewModel: MainActivityViewModel by viewModels()
+    private val viewModel: MainActivityViewModel by viewModels()
     override fun onPause() {
         viewModel.save()
         super.onPause()
@@ -81,7 +80,7 @@ fun MainElement(viewModel: MainActivityViewModel) {
             },
             ticksLeft = viewModel.meditationTicksLeft )
         if(characterState.soulForgeUnlocked) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(10.dp)
             )
             SoulForge()
@@ -101,7 +100,7 @@ fun SoulForge(){
 
 @Composable
 fun MeditateButton(onClick:  () -> Unit, ticksLeft: Int = 0) {
-    Row() {
+    Row {
         Button(
             modifier = Modifier.padding(horizontal = 8.dp),
             onClick = onClick,
@@ -109,14 +108,13 @@ fun MeditateButton(onClick:  () -> Unit, ticksLeft: Int = 0) {
         ) {
             Text(text = "Meditate")
         }
-
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp)
                 .align(Alignment.CenterVertically),
             //TODO: Remove magic number
-            progress = (ticksLeft / 10.0).toFloat(),
+            progress = { (ticksLeft / 10.0).toFloat() },
             strokeCap = StrokeCap.Round
         )
     }

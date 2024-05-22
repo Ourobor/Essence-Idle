@@ -1,16 +1,10 @@
 package com.ashe.essenceidle
 
-import android.os.Parcel
-import android.os.Parcelable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.Ignore
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
-class CharacterState() : RealmObject {
+class CharacterState : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var essenceStrength: Int = 0
