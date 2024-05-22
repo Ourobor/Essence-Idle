@@ -4,6 +4,10 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
+/**
+ * Contains the state of a character save. Please note this class **only** contains values that
+ * should be saved to the database. Anything else should be stored elsewhere, like a view controller
+ */
 class CharacterState : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()

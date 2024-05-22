@@ -1,5 +1,6 @@
 package com.ashe.essenceidle.model
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
@@ -20,14 +21,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel : ViewModel() {
+    //The character state
     private val _characterState = MutableStateFlow(CharacterState())
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
+
+    //Realm database references
     private val config = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
         .schemaVersion(2).build()
     private val realm: Realm = Realm.open(config)
 
+    //How many ticks per meditation task
     private val meditationTicks = 10
+    //How many ticks are left in the current meditation task
     var meditationTicksLeft by mutableIntStateOf(0)
+
     init {
         viewModelScope.launch {
 
@@ -45,6 +52,7 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
+    //TODO Gonna replace this in a bit
     fun startMeditation(){
         _characterState.update { characterState ->
             val newState = characterState.clone()
@@ -52,8 +60,13 @@ class MainActivityViewModel : ViewModel() {
             return@update newState
         }
     }
+
+    /**
+     * Execute one tick of simulation, updating the internal character state
+     */
     fun doTick(){
         _characterState.update {characterState ->
+            Log.d("EssenceIdle", "ticks left $meditationTicksLeft")
             val newState = characterState.clone()
             //Handle Meditation Tasks
             if (meditationTicksLeft > 0){
@@ -75,6 +88,9 @@ class MainActivityViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Saves the current state of the character to backing database
+     */
     fun save(): Job {
         return viewModelScope.launch {
             _characterState.collectLatest { characterState ->
