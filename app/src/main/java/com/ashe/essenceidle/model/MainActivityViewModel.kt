@@ -1,9 +1,6 @@
 package com.ashe.essenceidle.model
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ashe.essenceidle.model.task.EssenceAction
@@ -21,6 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+const val maxActivities = 5
 class MainActivityViewModel : ViewModel() {
     //The character state
     private val _characterState = MutableStateFlow(CharacterState())
@@ -31,8 +29,10 @@ class MainActivityViewModel : ViewModel() {
     private val realm: Realm = Realm.open(config)
 
     var essenceActions = mutableListOf<EssenceAction>()
+    var unlocks = mutableListOf<SoulUnlock>()
 
     init {
+        unlocks.add(ActionEngineUnlock())
         viewModelScope.launch {
 
             val items: RealmResults<CharacterState> = realm.query<CharacterState>().find()
@@ -45,6 +45,7 @@ class MainActivityViewModel : ViewModel() {
             }
             else {
                 _characterState.value = items[0].copyFromRealm()
+                //_characterState.value.essenceStrength = 200
             }
         }
     }
@@ -61,8 +62,9 @@ class MainActivityViewModel : ViewModel() {
             if(essenceActions.size > 0){
                 essenceActions[0].doTick()
                 if(essenceActions[0].isComplete()){
-                    essenceActions.removeFirst()
                     //TODO check to make sure this actually gets garbage collected?
+                    val action = essenceActions.removeFirst()
+                    action.executeAction(newState)
                 }
             }
 
@@ -79,6 +81,28 @@ class MainActivityViewModel : ViewModel() {
     }
 
     /**
+     * queues up an essence action at the end of the essence action queue
+     * @param action The action to add to the end of the list
+     */
+    fun queueEssenceAction(action: EssenceAction){
+        if(essenceActions.size < maxActivities) {
+            essenceActions.add(action)
+        }
+    }
+
+    /**
+     * Executes an update function on the character state in order to update it properly. Updates
+     * the state to what the update function returns
+     * @param updateFunction an update function that takes in a clone of the current state and returns it back after modification.
+     */
+    fun update(updateFunction: (CharacterState) -> CharacterState) {
+        _characterState.update { characterState ->
+            val newState = characterState.clone()
+            updateFunction(newState)
+        }
+    }
+
+    /**
      * Saves the current state of the character to backing database
      */
     fun save(): Job {
@@ -88,4 +112,5 @@ class MainActivityViewModel : ViewModel() {
             }
         }
     }
+
 }

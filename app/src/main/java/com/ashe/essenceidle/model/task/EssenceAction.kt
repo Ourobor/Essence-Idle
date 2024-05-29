@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import com.ashe.essenceidle.model.CharacterState
 
 abstract class EssenceAction {
     /**
@@ -12,6 +13,15 @@ abstract class EssenceAction {
      */
     var ticksRemaining by mutableIntStateOf(0)
         protected set
+
+    /**
+     * Executes the action, modifying the state. This is intended to be exectued in a coroutine,
+     * namely the update atomic coroutine that the viewModel uses. We do a naughty and do side
+     * effects on the given state
+     *
+     * @param characterState The current state
+     */
+    abstract fun executeAction(characterState: CharacterState)
 
     fun isComplete(): Boolean{
         return ticksRemaining == 0

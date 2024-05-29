@@ -10,11 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ashe.essenceidle.model.MainActivityViewModel
 
 @Composable
-fun SoulForge(){
+fun SoulForge(viewModel: MainActivityViewModel) {
     Surface(
-        color = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.padding(3.dp)
     ) {
         Column {
             Text(
@@ -23,9 +25,16 @@ fun SoulForge(){
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
             )
+            Text(
+                modifier = Modifier.padding(start = 10.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = "Reforge your soul to unlock new powers")
             HorizontalDivider(
                 modifier = Modifier.padding(10.dp)
             )
+            for (unlock in viewModel.unlocks){
+                unlock.Show(viewModel = viewModel)
+            }
         }
     }
 }
