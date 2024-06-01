@@ -7,7 +7,7 @@ Essence Idle is two things: a silly little idle game I felt like making to fiddl
 - [ ] A non-linear progression system that allows for personal expression and strategy
 - [ ] Integration into all sorts of android technology for bonuses, with those integrations being purely optional for the user. 
 
-## *Tentitive* Plans
+## *Tentative* Plans
 These are thoughts I've had but haven't looked into enough to actually plan. There are no guarentees at all if they'll get added or how they'll end up being implemented. 
 
 - [ ] Scanning barcodes for something
@@ -17,4 +17,4 @@ These are thoughts I've had but haven't looked into enough to actually plan. The
 
 
 # Contributions
-This is a personal portfolio project at the moment and I'm not really looking to make this for anyone other than myself. Honestly, I will be extremely surprised if anyone actually wants to contribute to some random nothing project but if there's actually someone reading this who wants to, reach out to me I guess. I'll see what I can do.
+This is a personal portfolio project at the moment and I'm not really looking to make this for anyone other than myself. Honestly, I will be extremely surprised if anyone is actually reading this far, let alone actually wants to contribute to some random nothing project but if there's someone reading this who wants to, reach out to me I guess. I'll see what I can do.
