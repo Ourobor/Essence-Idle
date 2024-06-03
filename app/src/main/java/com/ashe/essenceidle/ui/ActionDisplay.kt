@@ -21,14 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.MainActivityViewModel
 import com.ashe.essenceidle.model.maxActivities
 import com.ashe.essenceidle.model.task.EssenceAction
 import com.ashe.essenceidle.model.task.MeditateEssenceAction
 
 @Composable
-fun ActionDisplay(viewModel: MainActivityViewModel) {
-    val fullOnActions = viewModel.essenceActions.size >= maxActivities
+fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit) {
+    val fullOnActions = essenceActions.size >= maxActivities
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.padding(3.dp)
@@ -41,14 +40,15 @@ fun ActionDisplay(viewModel: MainActivityViewModel) {
                 fontSize = 20.sp,
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-            EssenceActionsList(essenceActions = viewModel.essenceActions)
+            EssenceActionsList(essenceActions = essenceActions)
             //list of all of the available actions to take
             Button(
-                onClick = { viewModel.queueEssenceAction(MeditateEssenceAction()) },
+                onClick = { queueFunction(MeditateEssenceAction()) },
                 enabled = !fullOnActions
             ) {
                 Text(text = "Meditate")
             }
+            //Ex:
             //if(essenceActionUnlockedFlag){
             // Button("foo")
         }

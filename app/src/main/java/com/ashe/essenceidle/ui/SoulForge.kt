@@ -7,13 +7,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.MainActivityViewModel
+import com.ashe.essenceidle.model.CharacterState
+import com.ashe.essenceidle.model.SoulUnlock
 
 @Composable
-fun SoulForge(viewModel: MainActivityViewModel) {
+fun SoulForge(
+    characterState: CharacterState,
+    updateFunction: ((CharacterState) -> CharacterState) -> Unit,
+    unlocks: SnapshotStateList<SoulUnlock>
+) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.padding(3.dp)
@@ -32,8 +38,8 @@ fun SoulForge(viewModel: MainActivityViewModel) {
             HorizontalDivider(
                 modifier = Modifier.padding(10.dp)
             )
-            for (unlock in viewModel.unlocks){
-                unlock.Show(viewModel = viewModel)
+            for (unlock in unlocks){
+                unlock.Show(characterState, updateFunction)
             }
         }
     }

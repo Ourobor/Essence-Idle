@@ -1,6 +1,6 @@
 package com.ashe.essenceidle.model
 
-import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ashe.essenceidle.model.task.EssenceAction
@@ -28,8 +28,8 @@ class MainActivityViewModel : ViewModel() {
         .schemaVersion(3).build()
     private val realm: Realm = Realm.open(config)
 
-    var essenceActions = mutableListOf<EssenceAction>()
-    var unlocks = mutableListOf<SoulUnlock>()
+    val essenceActions = mutableStateListOf<EssenceAction>()
+    var unlocks = mutableStateListOf<SoulUnlock>()
 
     init {
         unlocks.add(ActionEngineUnlock())
@@ -54,29 +54,38 @@ class MainActivityViewModel : ViewModel() {
      * Execute one tick of simulation, updating the internal character state
      */
     fun doTick(){
-        _characterState.update {characterState ->
-            Log.d("EssenceIdle", "essenceActions ${essenceActions.size}")
-            val newState = characterState.clone()
+        //grab the current state to check flags and such
+        val currentState = _characterState.value
+        //Handle EssenceActions
+        if(essenceActions.size > 0){
+            essenceActions[0].doTick()
+            if(essenceActions[0].isComplete()){
+                //TODO check to make sure this actually gets garbage collected?
+                val action = essenceActions.removeFirst()
 
-            //Handle EssenceActions
-            if(essenceActions.size > 0){
-                essenceActions[0].doTick()
-                if(essenceActions[0].isComplete()){
-                    //TODO check to make sure this actually gets garbage collected?
-                    val action = essenceActions.removeFirst()
+                //Actual State update
+                _characterState.update {characterState ->
+                    val newState = characterState.clone()
                     action.executeAction(newState)
-                }
-            }
 
-            //if the soulForge hasn't been unlocked. Save cycles by nesting the second check only if
-            //the soul forge isn't already unlocked, otherwise don't bother checking
-            if (!newState.soulForgeUnlocked){
-                //check to see if the player has accumulated a decent amount of essence and unlock it
-                if (newState.essenceStrength >= 50){
-                    newState.soulForgeUnlocked = true
+                    return@update newState
                 }
             }
-            return@update newState
+        }
+
+        //if the soulForge hasn't been unlocked. Save cycles by nesting the second check only if
+        //the soul forge isn't already unlocked, otherwise don't bother checking
+        if (!currentState.soulForgeUnlocked){
+            //check to see if the player has accumulated a decent amount of essence and unlock it
+            if (currentState.essenceStrength >= 50){
+
+                _characterState.update {characterState ->
+                    val newState = characterState.clone()
+                    newState.soulForgeUnlocked = true
+
+                    return@update newState
+                }
+            }
         }
     }
 
