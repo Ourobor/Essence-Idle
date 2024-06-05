@@ -25,7 +25,7 @@ class MainActivityViewModel : ViewModel() {
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
     //Realm database references
     private val config = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
-        .schemaVersion(3).build()
+        .schemaVersion(5).build()
     private val realm: Realm = Realm.open(config)
 
     val essenceActions = mutableStateListOf<EssenceAction>()
@@ -33,6 +33,10 @@ class MainActivityViewModel : ViewModel() {
 
     init {
         unlocks.add(ActionEngineUnlock())
+        unlocks.add(AgilityUnlock())
+        unlocks.add(PowerUnlock())
+        unlocks.add(SpiritUnlock())
+        unlocks.add(EnduranceUnlock())
         viewModelScope.launch {
 
             val items: RealmResults<CharacterState> = realm.query<CharacterState>().find()
@@ -45,6 +49,10 @@ class MainActivityViewModel : ViewModel() {
             }
             else {
                 _characterState.value = items[0].copyFromRealm()
+//                _characterState.value.agility = 1
+//                _characterState.value.power = 1
+//                _characterState.value.spirit = 1
+//                _characterState.value.endurance = 1
                 //_characterState.value.essenceStrength = 200
             }
         }

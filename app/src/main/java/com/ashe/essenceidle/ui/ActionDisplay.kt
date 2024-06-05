@@ -5,9 +5,12 @@ package com.ashe.essenceidle.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,8 +25,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashe.essenceidle.model.maxActivities
+import com.ashe.essenceidle.model.task.AgilityTrainingAction
+import com.ashe.essenceidle.model.task.EnduranceTrainingAction
 import com.ashe.essenceidle.model.task.EssenceAction
 import com.ashe.essenceidle.model.task.MeditateEssenceAction
+import com.ashe.essenceidle.model.task.PowerTrainingAction
+import com.ashe.essenceidle.model.task.SpiritTrainingAction
 
 @Composable
 fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit) {
@@ -41,16 +48,46 @@ fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (Es
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
             EssenceActionsList(essenceActions = essenceActions)
-            //list of all of the available actions to take
-            Button(
-                onClick = { queueFunction(MeditateEssenceAction()) },
-                enabled = !fullOnActions
-            ) {
-                Text(text = "Meditate")
+            FlowRow() {
+                //list of all of the available actions to take
+                Button(
+                    onClick = { queueFunction(MeditateEssenceAction()) },
+                    enabled = !fullOnActions
+                ) {
+                    Text(text = "Meditate")
+                }
+
+                Button(
+                    onClick = { queueFunction(AgilityTrainingAction()) },
+                    enabled = !fullOnActions
+                ) {
+                    Text(text = "Basic Agility Training")
+                }
+
+                Button(
+                    onClick = { queueFunction(PowerTrainingAction()) },
+                    enabled = !fullOnActions
+                ) {
+                    Text(text = "Basic Power Training")
+                }
+
+                Button(
+                    onClick = { queueFunction(SpiritTrainingAction()) },
+                    enabled = !fullOnActions
+                ) {
+                    Text(text = "Basic Spirit Training")
+                }
+
+                Button(
+                    onClick = { queueFunction(EnduranceTrainingAction()) },
+                    enabled = !fullOnActions
+                ) {
+                    Text(text = "Basic Endurance Training")
+                }
+                //Ex:
+                //if(essenceActionUnlockedFlag){
+                // Button("foo")
             }
-            //Ex:
-            //if(essenceActionUnlockedFlag){
-            // Button("foo")
         }
     }
 }
@@ -62,15 +99,8 @@ fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
     if (essenceActions.size > 0) {
         //Display the action summary
         essenceActions[0].Show()
-        if (essenceActions.size > 1) {
-            FlowRow() {
-                //display the list of smaller actions queued
-                for (i in 1..<essenceActions.size) {
-                    essenceActions[i].ShowCondensed()
-                }
-            }
-        }
     } else {
+        //Display a fake action card
         Card(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -92,4 +122,24 @@ fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
             }
         }
     }
+    Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        modifier = Modifier.padding(3.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .height(150.dp)
+                .fillMaxWidth()
+        ) {
+            items(essenceActions) { action ->
+                action.ShowCondensed()
+            }
+        }
+    }
+//    if (essenceActions.size > 1) {
+//        FlowRow() {
+//            //display the list of smaller actions queued
+//            for (i in 1..<essenceActions.size) {
+//                essenceActions[i].ShowCondensed()
+//            }
+//        }
+//    }
 }

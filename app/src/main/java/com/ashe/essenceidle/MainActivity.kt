@@ -65,7 +65,18 @@ class MainActivity : ComponentActivity() {
 
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                         //Stat Display
-                        StatDisplay(essenceStrength = characterState.essenceStrength)
+                        //As I understand this is probably the best way to do this right now?
+                        //By passing these as all primitives it lets Compose to more intelligently
+                        //skip recomposition
+                        StatDisplay(essenceStrength = characterState.essenceStrength,
+                            agility = characterState.agility,
+                            power = characterState.power,
+                            spirit = characterState.spirit,
+                            endurance = characterState.endurance,
+                            agilityUnlocked = characterState.agilityUnlocked,
+                            powerUnlocked = characterState.powerUnlocked,
+                            spiritUnlocked = characterState.spiritUnlocked,
+                            enduranceUnlocked = characterState.enduranceUnlocked)
 
                         //Action Engine/Simple meditation handling
                         if (characterState.multipleActionsUnlocked){

@@ -25,7 +25,7 @@ abstract class SoulUnlock(
      */
     @CallSuper
     open fun unlock(characterState: CharacterState): CharacterState{
-        characterState.essenceStrength - essenceCost
+        characterState.essenceStrength -= essenceCost
         return characterState
     }
 
@@ -69,5 +69,52 @@ class ActionEngineUnlock: SoulUnlock(essenceCost = 100, title = "Action Engine",
     override fun isUnlocked(characterState: CharacterState): Boolean {
         return characterState.multipleActionsUnlocked
     }
+}
 
+class AgilityUnlock: SoulUnlock(essenceCost = 150, title = "Awareness of Agility",
+    description = "Gain an awareness of your innate agility and cultivate its growth."){
+    override fun unlock(characterState: CharacterState): CharacterState {
+        val newCharacterState = super.unlock(characterState)
+        newCharacterState.agilityUnlocked = true
+        return newCharacterState
+    }
+    override fun isUnlocked(characterState: CharacterState): Boolean {
+        return characterState.agilityUnlocked
+    }
+}
+
+class PowerUnlock: SoulUnlock(essenceCost = 150, title = "Awareness of Power",
+    description = "Gain an awareness of your innate power and cultivate its growth."){
+    override fun unlock(characterState: CharacterState): CharacterState {
+        val newCharacterState = super.unlock(characterState)
+        newCharacterState.powerUnlocked = true
+        return newCharacterState
+    }
+    override fun isUnlocked(characterState: CharacterState): Boolean {
+        return characterState.powerUnlocked
+    }
+}
+
+class SpiritUnlock: SoulUnlock(essenceCost = 150, title = "Awareness of Spirit",
+    description = "Gain an awareness of your innate spirit and cultivate its growth."){
+    override fun unlock(characterState: CharacterState): CharacterState {
+        val newCharacterState = super.unlock(characterState)
+        newCharacterState.spiritUnlocked = true
+        return newCharacterState
+    }
+    override fun isUnlocked(characterState: CharacterState): Boolean {
+        return characterState.spiritUnlocked
+    }
+}
+
+class EnduranceUnlock: SoulUnlock(essenceCost = 150, title = "Awareness of Endurance",
+    description = "Gain an awareness of your innate endurance and cultivate its growth."){
+    override fun unlock(characterState: CharacterState): CharacterState {
+        val newCharacterState = super.unlock(characterState)
+        newCharacterState.enduranceUnlocked = true
+        return newCharacterState
+    }
+    override fun isUnlocked(characterState: CharacterState): Boolean {
+        return characterState.enduranceUnlocked
+    }
 }
