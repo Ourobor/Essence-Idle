@@ -2,7 +2,7 @@ package com.ashe.essenceidle.model.task
 
 import com.ashe.essenceidle.model.CharacterState
 
-private const val meditationTicks = 10
+private const val meditationTicks = 6
 private const val meditateEssenceGain = 10
 
 class MeditateEssenceAction() : EssenceAction("Meditating...", "Meditate") {

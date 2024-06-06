@@ -25,7 +25,7 @@ fun calculateAttributeGain(totalAttributes: Int, thisAttribute: Int, amount: Int
     return (totalPenalty  * minMaxPenalty * amount).toInt()
 }
 
-private const val agilityTrainingTicks = 10
+private const val agilityTrainingTicks = 6
 class AgilityTrainingAction: EssenceAction("Training Agility...", "AGI Train") {
     init {
         ticksRemaining = agilityTrainingTicks
@@ -46,7 +46,7 @@ class AgilityTrainingAction: EssenceAction("Training Agility...", "AGI Train") {
     }
 }
 
-private const val powerTrainingTicks = 10
+private const val powerTrainingTicks = 6
 class PowerTrainingAction: EssenceAction("Training power...", "PWR Train") {
     init {
         ticksRemaining = powerTrainingTicks
@@ -67,7 +67,7 @@ class PowerTrainingAction: EssenceAction("Training power...", "PWR Train") {
     }
 }
 
-private const val spiritTrainingTicks = 10
+private const val spiritTrainingTicks = 6
 class SpiritTrainingAction: EssenceAction("Training Spirit...", "SPR Training") {
     init {
         ticksRemaining = spiritTrainingTicks
@@ -88,7 +88,7 @@ class SpiritTrainingAction: EssenceAction("Training Spirit...", "SPR Training") 
     }
 }
 
-private const val enduranceTrainingTicks = 10
+private const val enduranceTrainingTicks = 6
 class EnduranceTrainingAction: EssenceAction("Training Endurance...", "END Train") {
     init {
         ticksRemaining = enduranceTrainingTicks

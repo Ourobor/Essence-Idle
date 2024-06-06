@@ -47,11 +47,11 @@ class MainActivity : ComponentActivity() {
         executor.scheduleAtFixedRate({
             //Do tick update
             viewModel.doTick()
-        }, 0, 500, TimeUnit.MILLISECONDS)
+        }, 0, 750, TimeUnit.MILLISECONDS)
         //Quicksave Handler
         executor.scheduleAtFixedRate({
             viewModel.save()
-        }, 0,360, TimeUnit.SECONDS)
+        }, 0,120, TimeUnit.SECONDS)
 
         setContent {
             //TODO: Update the theme. Manually setting it to always be darkmode is dumb.
