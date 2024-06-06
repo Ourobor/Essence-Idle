@@ -20,7 +20,7 @@ fun StatDisplay(essenceStrength: Int, agility: Int, power: Int, spirit: Int, end
                 agilityUnlocked: Boolean, powerUnlocked: Boolean,
                 spiritUnlocked: Boolean, enduranceUnlocked: Boolean) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.padding(3.dp)
     ) {
         Column(modifier = Modifier.padding(vertical = 10.dp)) {

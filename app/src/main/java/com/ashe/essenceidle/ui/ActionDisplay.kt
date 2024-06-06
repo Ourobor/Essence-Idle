@@ -37,18 +37,19 @@ import my.nanihadesuka.compose.ScrollbarSettings
 fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit,
                   characterState: CharacterState) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = Modifier.padding(3.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
                 text = "Action Engine(${essenceActions.size}/$maxActivities)",
-                modifier = Modifier.padding(vertical = 5.dp),
+                modifier = Modifier.padding(vertical = 2.dp),
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
             )
+            if(essenceActions.size > 0) essenceActions[0].Show()
+            else NoAction().Show()
             HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-            EssenceActionsList(essenceActions = essenceActions)
             ActionList(
                 queueFunction = queueFunction,
                 enabled = essenceActions.size >= maxActivities,
@@ -56,6 +57,8 @@ fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (Es
                 powerUnlocked = characterState.powerUnlocked,
                 spiritUnlocked = characterState.spiritUnlocked,
                 enduranceUnlocked = characterState.enduranceUnlocked)
+            HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+            EssenceActionsList(essenceActions = essenceActions)
         }
     }
 }
@@ -64,7 +67,7 @@ fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (Es
 //this, I prevent the entire ActionDisplay from being recomposed if essenceActions changes
 @Composable
 fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
-    Surface(color = MaterialTheme.colorScheme.surfaceContainerLow,
+    Surface(color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.padding(bottom = 5.dp),
         shape = RoundedCornerShape(8.dp)
         ) {
@@ -73,7 +76,7 @@ fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
             state = listState,
             settings = ScrollbarSettings.Default,
             modifier = Modifier
-                .height(150.dp),
+                .height(450.dp),
         ) {
             LazyColumn(
                 state = listState,
@@ -83,15 +86,15 @@ fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
                 itemsIndexed(essenceActions) { index, action ->
                     if (index == 0) {
                         //Display the action summary
-                        essenceActions[0].Show()
+                        //essenceActions[0].Show()
                     } else {
                         action.ShowCondensed(darkColor)
                         darkColor = !darkColor
                     }
                 }
-                if(essenceActions.size == 0){
-                    item { NoAction().Show() }
-                }
+//                if(essenceActions.size == 0){
+//                    item { NoAction().Show() }
+//                }
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +65,8 @@ abstract class EssenceAction(
         Surface(
             modifier = Modifier
                 .fillMaxWidth(),
-            color = MaterialTheme.colorScheme.secondaryContainer
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.primaryContainer
         ) {
             Column(Modifier.padding(5.dp)) {
                 Text(fontSize = 20.sp, text = fullDescription)
