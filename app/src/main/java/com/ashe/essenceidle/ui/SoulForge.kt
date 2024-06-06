@@ -21,7 +21,7 @@ fun SoulForge(
     unlocks: SnapshotStateList<SoulUnlock>
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = Modifier.padding(3.dp)
     ) {
         Column {

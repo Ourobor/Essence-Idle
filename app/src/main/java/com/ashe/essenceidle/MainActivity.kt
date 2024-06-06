@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             EssenceIdleTheme (darkTheme = true) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     val characterState by viewModel.characterState.collectAsState()
                     val essenceActions = viewModel.essenceActions
@@ -80,11 +80,11 @@ class MainActivity : ComponentActivity() {
 
                         //Action Engine/Simple meditation handling
                         if (characterState.multipleActionsUnlocked){
-                            ActionDisplay(essenceActions, viewModel::queueEssenceAction)
+                            ActionDisplay(essenceActions, viewModel::queueEssenceAction, characterState)
                         }
                         else{
                             Surface(
-                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                color = MaterialTheme.colorScheme.surfaceContainerLowest,
                                 modifier = Modifier.padding(3.dp)) {
                                 Box(Modifier.padding(5.dp)) {
                                     Row {

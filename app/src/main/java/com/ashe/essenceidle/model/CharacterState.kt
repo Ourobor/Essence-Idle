@@ -8,14 +8,15 @@ import org.mongodb.kbson.ObjectId
  * Contains the state of a character save. Please note this class **only** contains values that
  * should be saved to the database. Anything else should be stored elsewhere, like a view controller
  */
+@Suppress("PropertyName")
 class CharacterState : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var essenceStrength: Int = 0
-    var agility: Int = 0
-    var power: Int = 0
-    var spirit: Int = 0
-    var endurance: Int = 0
+    var agility: Int = 100
+    var power: Int = 100
+    var spirit: Int = 100
+    var endurance: Int = 100
     var soulForgeUnlocked: Boolean = false
     var multipleActionsUnlocked: Boolean = false
     var agilityUnlocked: Boolean = false

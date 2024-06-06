@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,10 +20,10 @@ fun StatDisplay(essenceStrength: Int, agility: Int, power: Int, spirit: Int, end
                 agilityUnlocked: Boolean, powerUnlocked: Boolean,
                 spiritUnlocked: Boolean, enduranceUnlocked: Boolean) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = Modifier.padding(3.dp)
     ) {
-        Column(modifier = Modifier.padding(vertical = 10.dp),) {
+        Column(modifier = Modifier.padding(vertical = 10.dp)) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -41,14 +39,14 @@ fun StatDisplay(essenceStrength: Int, agility: Int, power: Int, spirit: Int, end
                     if (agilityUnlocked) {
                         Text(
                             color = MaterialTheme.colorScheme.primary,
-                            text = "Agility: $agility"
+                            text = "Agility: ${agility / 100.0}"
                         )
                     }
 
                     if (spiritUnlocked) {
                         Text(
                             color = MaterialTheme.colorScheme.primary,
-                            text = "Spirit: $spirit"
+                            text = "Spirit: ${spirit / 100.0}"
                         )
                     }
                 }
@@ -56,14 +54,14 @@ fun StatDisplay(essenceStrength: Int, agility: Int, power: Int, spirit: Int, end
                     if (powerUnlocked) {
                         Text(
                             color = MaterialTheme.colorScheme.primary,
-                            text = "Power: $power"
+                            text = "Power: ${power / 100.0}"
                         )
                     }
 
                     if (enduranceUnlocked) {
                         Text(
                             color = MaterialTheme.colorScheme.primary,
-                            text = "Endurance: $endurance"
+                            text = "Endurance: ${endurance / 100.0}"
                         )
                     }
                 }

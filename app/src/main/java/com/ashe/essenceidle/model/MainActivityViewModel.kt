@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-const val maxActivities = 5
+const val maxActivities = 15
 class MainActivityViewModel : ViewModel() {
     //The character state
     private val _characterState = MutableStateFlow(CharacterState())
@@ -49,10 +49,11 @@ class MainActivityViewModel : ViewModel() {
             }
             else {
                 _characterState.value = items[0].copyFromRealm()
-//                _characterState.value.agility = 1
-//                _characterState.value.power = 1
-//                _characterState.value.spirit = 1
-//                _characterState.value.endurance = 1
+//                update { val char = CharacterState(); char._id = _characterState.value._id;char}
+//                _characterState.value.agility = 100
+//                _characterState.value.power = 100
+//                _characterState.value.spirit = 100
+//                _characterState.value.endurance = 100
                 //_characterState.value.essenceStrength = 200
             }
         }

@@ -8,7 +8,7 @@ Essence Idle is two things: a silly little idle game I felt like making to fiddl
 - [ ] Integration into all sorts of android technology for bonuses, with those integrations being purely optional for the user. 
 
 ## *Tentative* Plans
-These are thoughts I've had but haven't looked into enough to actually plan. There are no guarentees at all if they'll get added or how they'll end up being implemented. 
+These are thoughts I've had but haven't looked into enough to actually plan. There are no guarantee at all if they'll get added or how they'll end up being implemented. 
 
 - [ ] Scanning barcodes for something
 - [ ] Rewarding good sleep schedules by tapping into android's sleep tracking thingies. If possible. Did I mention I haven't looked into these ideas yet?

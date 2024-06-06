@@ -5,89 +5,57 @@ package com.ashe.essenceidle.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ashe.essenceidle.model.CharacterState
 import com.ashe.essenceidle.model.maxActivities
 import com.ashe.essenceidle.model.task.AgilityTrainingAction
 import com.ashe.essenceidle.model.task.EnduranceTrainingAction
 import com.ashe.essenceidle.model.task.EssenceAction
 import com.ashe.essenceidle.model.task.MeditateEssenceAction
+import com.ashe.essenceidle.model.task.NoAction
 import com.ashe.essenceidle.model.task.PowerTrainingAction
 import com.ashe.essenceidle.model.task.SpiritTrainingAction
+import my.nanihadesuka.compose.LazyColumnScrollbar
+import my.nanihadesuka.compose.ScrollbarSettings
 
 @Composable
-fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit) {
-    val fullOnActions = essenceActions.size >= maxActivities
+fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit,
+                  characterState: CharacterState) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = Modifier.padding(3.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
-                text = "Action Engine",
+                text = "Action Engine(${essenceActions.size}/$maxActivities)",
                 modifier = Modifier.padding(vertical = 5.dp),
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
             EssenceActionsList(essenceActions = essenceActions)
-            FlowRow() {
-                //list of all of the available actions to take
-                Button(
-                    onClick = { queueFunction(MeditateEssenceAction()) },
-                    enabled = !fullOnActions
-                ) {
-                    Text(text = "Meditate")
-                }
-
-                Button(
-                    onClick = { queueFunction(AgilityTrainingAction()) },
-                    enabled = !fullOnActions
-                ) {
-                    Text(text = "Basic Agility Training")
-                }
-
-                Button(
-                    onClick = { queueFunction(PowerTrainingAction()) },
-                    enabled = !fullOnActions
-                ) {
-                    Text(text = "Basic Power Training")
-                }
-
-                Button(
-                    onClick = { queueFunction(SpiritTrainingAction()) },
-                    enabled = !fullOnActions
-                ) {
-                    Text(text = "Basic Spirit Training")
-                }
-
-                Button(
-                    onClick = { queueFunction(EnduranceTrainingAction()) },
-                    enabled = !fullOnActions
-                ) {
-                    Text(text = "Basic Endurance Training")
-                }
-                //Ex:
-                //if(essenceActionUnlockedFlag){
-                // Button("foo")
-            }
+            ActionList(
+                queueFunction = queueFunction,
+                enabled = essenceActions.size >= maxActivities,
+                agilityUnlocked = characterState.agilityUnlocked,
+                powerUnlocked = characterState.powerUnlocked,
+                spiritUnlocked = characterState.spiritUnlocked,
+                enduranceUnlocked = characterState.enduranceUnlocked)
         }
     }
 }
@@ -96,50 +64,83 @@ fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (Es
 //this, I prevent the entire ActionDisplay from being recomposed if essenceActions changes
 @Composable
 fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
-    if (essenceActions.size > 0) {
-        //Display the action summary
-        essenceActions[0].Show()
-    } else {
-        //Display a fake action card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            )
+    Surface(color = MaterialTheme.colorScheme.surfaceContainerLow,
+        modifier = Modifier.padding(bottom = 5.dp),
+        shape = RoundedCornerShape(8.dp)
         ) {
-            Column(Modifier.padding(5.dp)) {
-                Text(fontSize = 20.sp, text = "No Action")
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(vertical = 5.dp))
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp),
-                    progress = { 0.0f },
-                    strokeCap = StrokeCap.Round,
-                )
+        val listState = rememberLazyListState()
+        LazyColumnScrollbar(
+            state = listState,
+            settings = ScrollbarSettings.Default,
+            modifier = Modifier
+                .height(150.dp),
+        ) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                var darkColor = true
+                itemsIndexed(essenceActions) { index, action ->
+                    if (index == 0) {
+                        //Display the action summary
+                        essenceActions[0].Show()
+                    } else {
+                        action.ShowCondensed(darkColor)
+                        darkColor = !darkColor
+                    }
+                }
+                if(essenceActions.size == 0){
+                    item { NoAction().Show() }
+                }
             }
         }
     }
-    Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.padding(3.dp)) {
-        LazyColumn(
-            modifier = Modifier
-                .height(150.dp)
-                .fillMaxWidth()
+}
+
+@Composable
+fun ActionList(queueFunction: (EssenceAction) -> Unit, enabled: Boolean = false,
+               agilityUnlocked: Boolean,
+               powerUnlocked: Boolean,
+               spiritUnlocked: Boolean,
+               enduranceUnlocked: Boolean) {
+
+    FlowRow() {
+        //list of all of the available actions to take
+        Button(
+            onClick = { queueFunction(MeditateEssenceAction()) },
+            enabled = !enabled
         ) {
-            items(essenceActions) { action ->
-                action.ShowCondensed()
-            }
+            Text(text = "Meditate")
         }
+        if (agilityUnlocked) Button(
+            onClick = { queueFunction(AgilityTrainingAction()) },
+            enabled = !enabled
+        ) {
+            Text(text = "Basic Agility Training")
+        }
+
+        if(powerUnlocked) Button(
+            onClick = { queueFunction(PowerTrainingAction()) },
+            enabled = !enabled
+        ) {
+            Text(text = "Basic Power Training")
+        }
+
+        if(spiritUnlocked) Button(
+            onClick = { queueFunction(SpiritTrainingAction()) },
+            enabled = !enabled
+        ) {
+            Text(text = "Basic Spirit Training")
+        }
+
+        if(enduranceUnlocked) Button(
+            onClick = { queueFunction(EnduranceTrainingAction()) },
+            enabled = !enabled
+        ) {
+            Text(text = "Basic Endurance Training")
+        }
+        //Ex:
+        //if(essenceActionUnlockedFlag){
+        // Button("foo")
     }
-//    if (essenceActions.size > 1) {
-//        FlowRow() {
-//            //display the list of smaller actions queued
-//            for (i in 1..<essenceActions.size) {
-//                essenceActions[i].ShowCondensed()
-//            }
-//        }
-//    }
 }
