@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -64,12 +63,14 @@ class MainActivity : ComponentActivity() {
             val characterState by viewModel.characterState.collectAsState()
             val essenceActions = viewModel.essenceActions
             //TODO: Update the theme. Manually setting it to always be darkmode is dumb.
-            EssenceIdleTheme (darkTheme = true) {
+            EssenceIdleTheme () {
                 BottomSheetScaffold(
-                    sheetPeekHeight = if (!characterState.multipleActionsUnlocked) 80.dp else 128.dp,
+                    sheetPeekHeight = if (!characterState.multipleActionsUnlocked) 65.dp else 128.dp,
                     sheetDragHandle = {
+                        if(characterState.multipleActionsUnlocked)
                                       HorizontalDivider(Modifier.width(50.dp).padding(top = 10.dp), thickness = 3.dp, color = MaterialTheme.colorScheme.onSecondaryContainer)
                     },
+                    sheetSwipeEnabled = characterState.multipleActionsUnlocked,
                     sheetShape = RectangleShape,
                     sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                     sheetContent = {

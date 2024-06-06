@@ -92,14 +92,17 @@ fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
                         darkColor = !darkColor
                     }
                 }
-//                if(essenceActions.size == 0){
-//                    item { NoAction().Show() }
-//                }
+                if(essenceActions.size < 2){
+                    item { Text("No Actions Queued",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(3.dp)) }
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ActionList(queueFunction: (EssenceAction) -> Unit, enabled: Boolean = false,
                agilityUnlocked: Boolean,
