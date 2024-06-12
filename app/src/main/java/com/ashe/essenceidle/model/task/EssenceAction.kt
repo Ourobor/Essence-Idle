@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.CharacterState
+import com.ashe.essenceidle.model.data.CharacterState
 
 abstract class EssenceAction(
     private val fullDescription: String,
@@ -101,6 +101,9 @@ abstract class EssenceAction(
     }
 }
 
+/**
+ * No Action is a dummy class used to show that there is no action for use in the action engine.
+ */
 class NoAction: EssenceAction("No action", "This shouldn't be possible :3"){
     override fun executeAction(characterState: CharacterState) {
         throw RuntimeException("This is a dummy action and shouldn't actually be possible to execute")
@@ -109,5 +112,4 @@ class NoAction: EssenceAction("No action", "This shouldn't be possible :3"){
     override fun progress(): Float {
         return 0.0f
     }
-
 }

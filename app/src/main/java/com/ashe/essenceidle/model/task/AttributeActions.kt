@@ -1,11 +1,21 @@
 package com.ashe.essenceidle.model.task
 
-import android.util.Log
-import com.ashe.essenceidle.model.CharacterState
+import com.ashe.essenceidle.model.data.CharacterState
 
 private const val totalAttributePenalty = 500.0
 private const val thisAttributePenalty = 2000.0
-//TODO: This is probably should be in another file probably
+private const val attributeTrainingTicks = 6
+
+/**
+ * Calculate the amount of Attribute points a player should gain given the maximum value and the
+ * current state. Applies penalties to overall gain based on current game state and returns the
+ * that amount
+ * @param totalAttributes the sum of all attribute points
+ * @param thisAttribute the value of the attribute gaining points
+ * @param amount the maximum amount of attribute points to be added
+ *
+ * @return modified attribute point gain
+ */
 fun calculateAttributeGain(totalAttributes: Int, thisAttribute: Int, amount: Int): Int {
     //Factors in order of importance
     //1: penalty the more total attribute points. As you get more attributes, it takes longer to
@@ -25,36 +35,33 @@ fun calculateAttributeGain(totalAttributes: Int, thisAttribute: Int, amount: Int
     return (totalPenalty  * minMaxPenalty * amount).toInt()
 }
 
-private const val agilityTrainingTicks = 6
-class AgilityTrainingAction: EssenceAction("Training Agility...", "AGI Train") {
+class SpeedTrainingAction: EssenceAction("Training Speed...", "SPD Train") {
     init {
-        ticksRemaining = agilityTrainingTicks
+        ticksRemaining = attributeTrainingTicks
     }
 
     override fun executeAction(characterState: CharacterState) {
-        Log.d("EssenceIdle", "Agility:${characterState.agility}")
-        val totalAttributes = (characterState.agility + characterState.power + characterState.endurance + characterState.spirit)
-        characterState.agility +=
+//        Log.d("EssenceIdle", "Speed:${characterState.speed}")
+        val totalAttributes = (characterState.speed + characterState.power + characterState.endurance + characterState.spirit)
+        characterState.speed +=
             calculateAttributeGain(
                 totalAttributes = totalAttributes,
-                thisAttribute = characterState.agility,
+                thisAttribute = characterState.speed,
                 amount = 10)
     }
 
     override fun progress(): Float {
-        return (ticksRemaining.toFloat() / agilityTrainingTicks)
+        return (ticksRemaining.toFloat() / attributeTrainingTicks)
     }
 }
 
-private const val powerTrainingTicks = 6
 class PowerTrainingAction: EssenceAction("Training power...", "PWR Train") {
     init {
-        ticksRemaining = powerTrainingTicks
+        ticksRemaining = attributeTrainingTicks
     }
 
     override fun executeAction(characterState: CharacterState) {
-        Log.d("EssenceIdle", "Agility:${characterState.agility}")
-        val totalAttributes = (characterState.agility + characterState.power + characterState.endurance + characterState.spirit)
+        val totalAttributes = (characterState.speed + characterState.power + characterState.endurance + characterState.spirit)
         characterState.power +=
             calculateAttributeGain(
                 totalAttributes = totalAttributes,
@@ -63,19 +70,17 @@ class PowerTrainingAction: EssenceAction("Training power...", "PWR Train") {
     }
 
     override fun progress(): Float {
-        return (ticksRemaining.toFloat() / powerTrainingTicks)
+        return (ticksRemaining.toFloat() / attributeTrainingTicks)
     }
 }
 
-private const val spiritTrainingTicks = 6
 class SpiritTrainingAction: EssenceAction("Training Spirit...", "SPR Training") {
     init {
-        ticksRemaining = spiritTrainingTicks
+        ticksRemaining = attributeTrainingTicks
     }
 
     override fun executeAction(characterState: CharacterState) {
-        Log.d("EssenceIdle", "Agility:${characterState.agility}")
-        val totalAttributes = (characterState.agility + characterState.power + characterState.endurance + characterState.spirit)
+        val totalAttributes = (characterState.speed + characterState.power + characterState.endurance + characterState.spirit)
         characterState.spirit +=
             calculateAttributeGain(
                 totalAttributes = totalAttributes,
@@ -84,18 +89,17 @@ class SpiritTrainingAction: EssenceAction("Training Spirit...", "SPR Training") 
     }
 
     override fun progress(): Float {
-        return (ticksRemaining.toFloat() / spiritTrainingTicks)
+        return (ticksRemaining.toFloat() / attributeTrainingTicks)
     }
 }
 
-private const val enduranceTrainingTicks = 6
 class EnduranceTrainingAction: EssenceAction("Training Endurance...", "END Train") {
     init {
-        ticksRemaining = enduranceTrainingTicks
+        ticksRemaining = attributeTrainingTicks
     }
 
     override fun executeAction(characterState: CharacterState) {
-        val totalAttributes = (characterState.agility + characterState.power + characterState.endurance + characterState.spirit)
+        val totalAttributes = (characterState.speed + characterState.power + characterState.endurance + characterState.spirit)
         characterState.endurance +=
             calculateAttributeGain(
                 totalAttributes = totalAttributes,
@@ -104,6 +108,6 @@ class EnduranceTrainingAction: EssenceAction("Training Endurance...", "END Train
     }
 
     override fun progress(): Float {
-        return (ticksRemaining.toFloat() / enduranceTrainingTicks)
+        return (ticksRemaining.toFloat() / attributeTrainingTicks)
     }
 }

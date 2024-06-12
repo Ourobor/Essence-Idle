@@ -11,7 +11,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.CharacterState
+import com.ashe.essenceidle.model.data.CharacterState
 import com.ashe.essenceidle.model.SoulUnlock
 
 @Composable

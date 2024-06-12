@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ashe.essenceidle.model.data.CharacterState
 
 abstract class SoulUnlock(
     val essenceCost: Int,
@@ -24,7 +25,7 @@ abstract class SoulUnlock(
      * cost from the current state before they do anything else
      */
     @CallSuper
-    open fun unlock(characterState: CharacterState): CharacterState{
+    open fun unlock(characterState: CharacterState): CharacterState {
         characterState.essenceStrength -= essenceCost
         return characterState
     }
@@ -71,15 +72,15 @@ class ActionEngineUnlock: SoulUnlock(essenceCost = 100, title = "Action Engine",
     }
 }
 
-class AgilityUnlock: SoulUnlock(essenceCost = 150, title = "Awareness of Agility",
-    description = "Gain an awareness of your innate agility and cultivate its growth."){
+class SpeedUnlock: SoulUnlock(essenceCost = 150, title = "Awareness of Speed",
+    description = "Gain an awareness of your innate speed and cultivate its growth."){
     override fun unlock(characterState: CharacterState): CharacterState {
         val newCharacterState = super.unlock(characterState)
-        newCharacterState.agilityUnlocked = true
+        newCharacterState.speedUnlocked = true
         return newCharacterState
     }
     override fun isUnlocked(characterState: CharacterState): Boolean {
-        return characterState.agilityUnlocked
+        return characterState.speedUnlocked
     }
 }
 

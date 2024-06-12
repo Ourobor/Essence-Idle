@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun StatDisplay(essenceStrength: Int, agility: Int, power: Int, spirit: Int, endurance: Int,
-                agilityUnlocked: Boolean, powerUnlocked: Boolean,
+fun StatDisplay(essenceStrength: Int, speed: Int, power: Int, spirit: Int, endurance: Int,
+                speedUnlocked: Boolean, powerUnlocked: Boolean,
                 spiritUnlocked: Boolean, enduranceUnlocked: Boolean) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
@@ -36,10 +36,10 @@ fun StatDisplay(essenceStrength: Int, agility: Int, power: Int, spirit: Int, end
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround) {
                 Column(horizontalAlignment = Alignment.End) {
-                    if (agilityUnlocked) {
+                    if (speedUnlocked) {
                         Text(
                             color = MaterialTheme.colorScheme.primary,
-                            text = "Agility: ${agility / 100.0}"
+                            text = "Speed: ${speed / 100.0}"
                         )
                     }
 

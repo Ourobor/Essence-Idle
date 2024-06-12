@@ -21,9 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.CharacterState
+import com.ashe.essenceidle.model.data.CharacterState
 import com.ashe.essenceidle.model.maxActivities
-import com.ashe.essenceidle.model.task.AgilityTrainingAction
+import com.ashe.essenceidle.model.task.SpeedTrainingAction
 import com.ashe.essenceidle.model.task.EnduranceTrainingAction
 import com.ashe.essenceidle.model.task.EssenceAction
 import com.ashe.essenceidle.model.task.MeditateEssenceAction
@@ -35,7 +35,8 @@ import my.nanihadesuka.compose.ScrollbarSettings
 
 @Composable
 fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit,
-                  characterState: CharacterState) {
+                  characterState: CharacterState
+) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = Modifier.padding(3.dp)
@@ -53,7 +54,7 @@ fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (Es
             ActionList(
                 queueFunction = queueFunction,
                 enabled = essenceActions.size >= maxActivities,
-                agilityUnlocked = characterState.agilityUnlocked,
+                speedUnlocked = characterState.speedUnlocked,
                 powerUnlocked = characterState.powerUnlocked,
                 spiritUnlocked = characterState.spiritUnlocked,
                 enduranceUnlocked = characterState.enduranceUnlocked)
@@ -105,7 +106,7 @@ fun EssenceActionsList(essenceActions: MutableList<EssenceAction>) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ActionList(queueFunction: (EssenceAction) -> Unit, enabled: Boolean = false,
-               agilityUnlocked: Boolean,
+               speedUnlocked: Boolean,
                powerUnlocked: Boolean,
                spiritUnlocked: Boolean,
                enduranceUnlocked: Boolean) {
@@ -118,11 +119,11 @@ fun ActionList(queueFunction: (EssenceAction) -> Unit, enabled: Boolean = false,
         ) {
             Text(text = "Meditate")
         }
-        if (agilityUnlocked) Button(
-            onClick = { queueFunction(AgilityTrainingAction()) },
+        if (speedUnlocked) Button(
+            onClick = { queueFunction(SpeedTrainingAction()) },
             enabled = !enabled
         ) {
-            Text(text = "Basic Agility Training")
+            Text(text = "Basic Speed Training")
         }
 
         if(powerUnlocked) Button(

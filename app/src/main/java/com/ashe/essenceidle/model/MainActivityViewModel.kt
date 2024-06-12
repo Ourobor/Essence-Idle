@@ -3,6 +3,7 @@ package com.ashe.essenceidle.model
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ashe.essenceidle.model.data.CharacterState
 import com.ashe.essenceidle.model.task.EssenceAction
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -24,16 +25,16 @@ class MainActivityViewModel : ViewModel() {
     private val _characterState = MutableStateFlow(CharacterState())
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
     //Realm database references
-    private val config = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
-        .schemaVersion(5).build()
-    private val realm: Realm = Realm.open(config)
+    private val charConfig = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
+        .schemaVersion(6).build()
+    private val realm: Realm = Realm.open(charConfig)
 
     val essenceActions = mutableStateListOf<EssenceAction>()
     var unlocks = mutableStateListOf<SoulUnlock>()
 
     init {
         unlocks.add(ActionEngineUnlock())
-        unlocks.add(AgilityUnlock())
+        unlocks.add(SpeedUnlock())
         unlocks.add(PowerUnlock())
         unlocks.add(SpiritUnlock())
         unlocks.add(EnduranceUnlock())
@@ -50,7 +51,7 @@ class MainActivityViewModel : ViewModel() {
             else {
                 _characterState.value = items[0].copyFromRealm()
 //                update { val char = CharacterState(); char._id = _characterState.value._id;char}
-//                _characterState.value.agility = 100
+//                _characterState.value.speed = 100
 //                _characterState.value.power = 100
 //                _characterState.value.spirit = 100
 //                _characterState.value.endurance = 100
@@ -76,7 +77,6 @@ class MainActivityViewModel : ViewModel() {
                 _characterState.update {characterState ->
                     val newState = characterState.clone()
                     action.executeAction(newState)
-
                     return@update newState
                 }
             }
@@ -87,11 +87,9 @@ class MainActivityViewModel : ViewModel() {
         if (!currentState.soulForgeUnlocked){
             //check to see if the player has accumulated a decent amount of essence and unlock it
             if (currentState.essenceStrength >= 50){
-
                 _characterState.update {characterState ->
                     val newState = characterState.clone()
                     newState.soulForgeUnlocked = true
-
                     return@update newState
                 }
             }
