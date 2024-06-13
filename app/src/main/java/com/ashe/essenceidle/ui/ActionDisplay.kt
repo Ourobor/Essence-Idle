@@ -38,7 +38,7 @@ fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (Es
                   characterState: CharacterState
 ) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
         modifier = Modifier.padding(3.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {

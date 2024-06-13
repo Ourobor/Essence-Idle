@@ -4,28 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.MailOutline
 import androidx.compose.material.icons.sharp.Menu
+import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -38,11 +31,10 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -52,10 +44,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import com.ashe.essenceidle.model.MainActivityViewModel
 import com.ashe.essenceidle.model.data.CharacterState
-import com.ashe.essenceidle.model.task.MeditateEssenceAction
-import com.ashe.essenceidle.ui.ActionDisplay
-import com.ashe.essenceidle.ui.SoulForge
-import com.ashe.essenceidle.ui.StatDisplay
+import com.ashe.essenceidle.ui.ActionSheet
+import com.ashe.essenceidle.ui.screens.ContactScreen
+import com.ashe.essenceidle.ui.screens.MainScreen
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -63,7 +54,8 @@ import java.util.concurrent.TimeUnit
 
 enum class Screens() {
     Home,
-    Contacts
+    Contacts,
+    Settings
 }
 
 class MainActivity : ComponentActivity() {
@@ -98,32 +90,33 @@ class MainActivity : ComponentActivity() {
             val characterState by viewModel.characterState.collectAsState()
 
             val navGraph = navController.createGraph(startDestination = Screens.Home.name) {
-                composable(Screens.Home.name) { MainScreen(characterState = characterState) }
-                composable(Screens.Contacts.name) { Text("Potato") }
+                composable(Screens.Home.name) { MainScreen(viewModel) }
+                composable(Screens.Contacts.name) { ContactScreen() }
+                composable(Screens.Settings.name) { Text("Settings!") }
             }
 
             EssenceIdleTheme() {
                 ModalNavigationDrawer(
                     drawerState = drawerState,
+                    scrimColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
                     drawerContent = {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
-
                         ModalDrawerSheet {
-                            IconToggleButton(
-                                modifier = Modifier.padding(top = 8.dp, start = 8.dp),
-                                checked = false,
-                                onCheckedChange = {
-                                    scope.launch {
-                                        drawerState.apply {
-                                            if (isClosed) open() else close()
-                                        }
-                                    }
-                                }) {
-                                Icon(
-                                    imageVector = Icons.Sharp.Menu,
-                                    contentDescription = "Menu"
-                                )
-                            }
+//                            IconToggleButton(
+//                                modifier = Modifier.padding(top = 8.dp, start = 8.dp),
+//                                checked = false,
+//                                onCheckedChange = {
+//                                    scope.launch {
+//                                        drawerState.apply {
+//                                            if (isClosed) open() else close()
+//                                        }
+//                                    }
+//                                }) {
+//                                Icon(
+//                                    imageVector = Icons.Sharp.Menu,
+//                                    contentDescription = "Menu"
+//                                )
+//                            }
                             NavigationDrawerItem(
                                 label = { Text("Home") },
                                 icon = {
@@ -156,6 +149,22 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 })
+                            NavigationDrawerItem(
+                                label = { Text(Screens.Settings.name) },
+                                icon = {
+                                    Icon(imageVector = Icons.Sharp.Settings,
+                                        contentDescription = Screens.Settings.name)
+                                },
+                                selected = navBackStackEntry?.destination?.route == Screens.Settings.name,
+                                shape = RectangleShape,
+                                onClick = {
+                                    navController.navigate(Screens.Settings.name)
+                                    scope.launch {
+                                        drawerState.apply {
+                                            close()
+                                        }
+                                    }
+                                })
                         }
                     }
                 ){
@@ -166,7 +175,7 @@ class MainActivity : ComponentActivity() {
                         //unlocked
                         sheetSwipeEnabled = characterState.multipleActionsUnlocked,
                         sheetShape = RectangleShape,
-                        sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         sheetDragHandle = {
                             if (characterState.multipleActionsUnlocked)
                                 HorizontalDivider(
@@ -205,89 +214,17 @@ class MainActivity : ComponentActivity() {
                                 })
                         },
                         sheetContent = {
-                            ActionSheet(characterState = characterState)
+                            ActionSheet(viewModel = viewModel)
                         }
                     ) { padding ->
                         Surface(
-                            modifier = Modifier.fillMaxSize().padding(padding),
+                            modifier = Modifier
+                                .padding(padding)
+                                .fillMaxSize(),
                             color = MaterialTheme.colorScheme.surface
                         ) {
                             NavHost(navController = navController, graph = navGraph)
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun MainScreen(characterState: CharacterState){
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState()),
-        ) {
-            //Stat Display
-            //As I understand this is probably the best way to do this right now?
-            //By passing these as all primitives it lets Compose to more intelligently
-            //skip recomposition
-            StatDisplay(
-                essenceStrength = characterState.essenceStrength,
-                speed = characterState.speed,
-                power = characterState.power,
-                spirit = characterState.spirit,
-                endurance = characterState.endurance,
-                speedUnlocked = characterState.speedUnlocked,
-                powerUnlocked = characterState.powerUnlocked,
-                spiritUnlocked = characterState.spiritUnlocked,
-                enduranceUnlocked = characterState.enduranceUnlocked
-            )
-
-            //Soul Forge
-            if (characterState.soulForgeUnlocked) {
-                SoulForge(characterState, viewModel::update, viewModel.unlocks)
-            }
-        }
-    }
-
-    @Composable
-    private fun ActionSheet(characterState: CharacterState, ){
-        //Action Engine/Simple meditation handling
-        if (characterState.multipleActionsUnlocked) {
-            ActionDisplay(
-                viewModel.essenceActions,
-                viewModel::queueEssenceAction,
-                characterState
-            )
-        } else {
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier.padding(3.dp)
-            ) {
-                Box(Modifier.padding(5.dp)) {
-                    Row {
-                        Button(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            onClick = {
-                                viewModel.essenceActions.add(MeditateEssenceAction())
-                            },
-                            enabled = viewModel.essenceActions.size == 0
-                        ) {
-                            Text(text = "Meditate")
-                        }
-                        LinearProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(20.dp)
-                                .align(Alignment.CenterVertically),
-                            progress = {
-                                if (viewModel.essenceActions.size > 0) {
-                                    viewModel.essenceActions[0].progress()
-                                } else {
-                                    0.0f
-                                }
-                            },
-                            strokeCap = StrokeCap.Round
-                        )
                     }
                 }
             }
