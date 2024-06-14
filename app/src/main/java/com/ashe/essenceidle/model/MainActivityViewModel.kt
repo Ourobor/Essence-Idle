@@ -49,7 +49,7 @@ class MainActivityViewModel : ViewModel() {
             }
             else {
                 _characterState.value = items[0].copyFromRealm()
-                update { val char = CharacterState(); char._id = _characterState.value._id;char}
+//                update { val char = CharacterState(); char._id = _characterState.value._id;char}
 //                _characterState.value.speed = 100
 //                _characterState.value.power = 100
 //                _characterState.value.spirit = 100
