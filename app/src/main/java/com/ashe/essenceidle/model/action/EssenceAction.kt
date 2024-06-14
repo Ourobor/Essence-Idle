@@ -1,4 +1,4 @@
-package com.ashe.essenceidle.model.task
+package com.ashe.essenceidle.model.action
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.data.CharacterState
+import com.ashe.essenceidle.model.database.CharacterState
 
 abstract class EssenceAction(
     private val fullDescription: String,
@@ -90,14 +92,16 @@ abstract class EssenceAction(
      */
     @Composable
     fun ShowCondensed(darkColor: Boolean = false) {
-        Surface(color = if (darkColor){
-            MaterialTheme.colorScheme.primaryContainer
-        }else{
+        val color = if (darkColor){
             MaterialTheme.colorScheme.secondaryContainer
-        },
-            modifier = Modifier.padding(horizontal = 0.dp).fillMaxWidth()) {
-            Text(modifier = Modifier.padding(horizontal = 10.dp), text = shortDescription)
+        }else{
+            MaterialTheme.colorScheme.tertiaryContainer
         }
+        ListItem(
+            colors = ListItemDefaults.colors(containerColor = color),
+            headlineContent = {
+            Text(modifier = Modifier.padding(horizontal = 10.dp), text = shortDescription)
+        })
     }
 }
 

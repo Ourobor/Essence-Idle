@@ -1,6 +1,6 @@
-package com.ashe.essenceidle.model.task
+package com.ashe.essenceidle.model.action
 
-import com.ashe.essenceidle.model.data.CharacterState
+import com.ashe.essenceidle.model.database.CharacterState
 
 private const val meditationTicks = 6
 private const val meditateEssenceGain = 10

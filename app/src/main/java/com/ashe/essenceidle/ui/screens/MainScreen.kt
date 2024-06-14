@@ -8,7 +8,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.ashe.essenceidle.model.MainActivityViewModel
-import com.ashe.essenceidle.model.data.CharacterState
 import com.ashe.essenceidle.ui.SoulForge
 import com.ashe.essenceidle.ui.StatDisplay
 
@@ -35,9 +34,6 @@ fun MainScreen(viewModel: MainActivityViewModel){
             enduranceUnlocked = characterState.enduranceUnlocked
         )
 
-        //Soul Forge
-        if (characterState.soulForgeUnlocked) {
-            SoulForge(characterState, viewModel::update, viewModel.unlocks)
-        }
+        SoulForge(characterState, viewModel::update, viewModel.unlocks)
     }
 }

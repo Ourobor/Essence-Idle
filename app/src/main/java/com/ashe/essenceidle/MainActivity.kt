@@ -31,7 +31,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -43,8 +42,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import com.ashe.essenceidle.model.MainActivityViewModel
-import com.ashe.essenceidle.model.data.CharacterState
+import com.ashe.essenceidle.model.database.CharacterState
 import com.ashe.essenceidle.ui.ActionSheet
+import com.ashe.essenceidle.ui.OnboardingSequence
 import com.ashe.essenceidle.ui.screens.ContactScreen
 import com.ashe.essenceidle.ui.screens.MainScreen
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
@@ -94,14 +94,16 @@ class MainActivity : ComponentActivity() {
                 composable(Screens.Contacts.name) { ContactScreen() }
                 composable(Screens.Settings.name) { Text("Settings!") }
             }
-
-            EssenceIdleTheme() {
-                ModalNavigationDrawer(
-                    drawerState = drawerState,
-                    scrimColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
-                    drawerContent = {
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        ModalDrawerSheet {
+            EssenceIdleTheme {
+                if (!characterState.onboarded) {
+                    OnboardingSequence(viewModel)
+                } else {
+                    ModalNavigationDrawer(
+                        drawerState = drawerState,
+                        scrimColor = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
+                        drawerContent = {
+                            val navBackStackEntry by navController.currentBackStackEntryAsState()
+                            ModalDrawerSheet {
 //                            IconToggleButton(
 //                                modifier = Modifier.padding(top = 8.dp, start = 8.dp),
 //                                checked = false,
@@ -117,113 +119,121 @@ class MainActivity : ComponentActivity() {
 //                                    contentDescription = "Menu"
 //                                )
 //                            }
-                            NavigationDrawerItem(
-                                label = { Text("Home") },
-                                icon = {
-                                       Icon(imageVector = Icons.Sharp.Home,
-                                           contentDescription = "Home")
-                                },
-                                selected = navBackStackEntry?.destination?.route == Screens.Home.name,
-                                shape = RectangleShape,
-                                onClick = {
-                                    navController.navigate(Screens.Home.name)
-                                    scope.launch {
-                                        drawerState.apply {
-                                            close()
-                                        }
-                                    }
-                                })
-                            NavigationDrawerItem(
-                                label = { Text("Contacts") },
-                                icon = {
-                                    Icon(imageVector = Icons.Sharp.MailOutline,
-                                        contentDescription = "Contacts")
-                                },
-                                selected = navBackStackEntry?.destination?.route == Screens.Contacts.name,
-                                shape = RectangleShape,
-                                onClick = {
-                                    navController.navigate(Screens.Contacts.name)
-                                    scope.launch {
-                                        drawerState.apply {
-                                            close()
-                                        }
-                                    }
-                                })
-                            NavigationDrawerItem(
-                                label = { Text(Screens.Settings.name) },
-                                icon = {
-                                    Icon(imageVector = Icons.Sharp.Settings,
-                                        contentDescription = Screens.Settings.name)
-                                },
-                                selected = navBackStackEntry?.destination?.route == Screens.Settings.name,
-                                shape = RectangleShape,
-                                onClick = {
-                                    navController.navigate(Screens.Settings.name)
-                                    scope.launch {
-                                        drawerState.apply {
-                                            close()
-                                        }
-                                    }
-                                })
-                        }
-                    }
-                ){
-                    BottomSheetScaffold(
-                        //Eyeballed values to make the bottom sheet show just enough when peeking.
-                        sheetPeekHeight = if (!characterState.multipleActionsUnlocked) 65.dp else 128.dp,
-                        //We don't really care about the sheet being opened before multiple actions are
-                        //unlocked
-                        sheetSwipeEnabled = characterState.multipleActionsUnlocked,
-                        sheetShape = RectangleShape,
-                        sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        sheetDragHandle = {
-                            if (characterState.multipleActionsUnlocked)
-                                HorizontalDivider(
-                                    Modifier
-                                        .width(50.dp)
-                                        .padding(top = 10.dp),
-                                    thickness = 3.dp,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                        },
-                        topBar = {
-                            TopAppBar(
-                                colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                    titleContentColor = MaterialTheme.colorScheme.primary
-                                ),
-                                navigationIcon = {
-                                    IconToggleButton(
-                                        checked = false,
-                                        onCheckedChange = {
-                                            scope.launch {
-                                                drawerState.apply {
-                                                    if (isClosed) open() else close()
-                                                }
-                                            }
-                                        }) {
+                                NavigationDrawerItem(
+                                    label = { Text("Home") },
+                                    icon = {
                                         Icon(
-                                            imageVector = Icons.Sharp.Menu,
-                                            contentDescription = "Menu"
+                                            imageVector = Icons.Sharp.Home,
+                                            contentDescription = "Home"
                                         )
-                                    }
-                                },
-                                title = {
-                                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                                    Text("${navBackStackEntry?.destination?.route}")
-                                })
-                        },
-                        sheetContent = {
-                            ActionSheet(viewModel = viewModel)
+                                    },
+                                    selected = navBackStackEntry?.destination?.route == Screens.Home.name,
+                                    shape = RectangleShape,
+                                    onClick = {
+                                        navController.navigate(Screens.Home.name)
+                                        scope.launch {
+                                            drawerState.apply {
+                                                close()
+                                            }
+                                        }
+                                    })
+                                NavigationDrawerItem(
+                                    label = { Text("Contacts") },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Sharp.MailOutline,
+                                            contentDescription = "Contacts"
+                                        )
+                                    },
+                                    selected = navBackStackEntry?.destination?.route == Screens.Contacts.name,
+                                    shape = RectangleShape,
+                                    onClick = {
+                                        navController.navigate(Screens.Contacts.name)
+                                        scope.launch {
+                                            drawerState.apply {
+                                                close()
+                                            }
+                                        }
+                                    })
+                                NavigationDrawerItem(
+                                    label = { Text(Screens.Settings.name) },
+                                    icon = {
+                                        Icon(
+                                            imageVector = Icons.Sharp.Settings,
+                                            contentDescription = Screens.Settings.name
+                                        )
+                                    },
+                                    selected = navBackStackEntry?.destination?.route == Screens.Settings.name,
+                                    shape = RectangleShape,
+                                    onClick = {
+                                        navController.navigate(Screens.Settings.name)
+                                        scope.launch {
+                                            drawerState.apply {
+                                                close()
+                                            }
+                                        }
+                                    })
+                            }
                         }
-                    ) { padding ->
-                        Surface(
-                            modifier = Modifier
-                                .padding(padding)
-                                .fillMaxSize(),
-                            color = MaterialTheme.colorScheme.surface
-                        ) {
-                            NavHost(navController = navController, graph = navGraph)
+                    ) {
+                        BottomSheetScaffold(
+                            //Eyeballed values to make the bottom sheet show just enough when peeking.
+                            sheetPeekHeight = 128.dp,
+                            sheetShape = RectangleShape,
+                            sheetContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            sheetDragHandle = {
+                                    HorizontalDivider(
+                                        Modifier
+                                            .width(50.dp)
+                                            .padding(top = 10.dp),
+                                        thickness = 3.dp,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                            },
+                            topBar = {
+                                TopAppBar(
+                                    colors = TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        titleContentColor = MaterialTheme.colorScheme.primary
+                                    ),
+                                    navigationIcon = {
+                                        IconToggleButton(
+                                            checked = false,
+                                            onCheckedChange = {
+                                                scope.launch {
+                                                    drawerState.apply {
+                                                        if (isClosed) open() else close()
+                                                    }
+                                                }
+                                            }) {
+                                            Icon(
+                                                imageVector = Icons.Sharp.Menu,
+                                                contentDescription = "Menu"
+                                            )
+                                        }
+                                    },
+                                    title = {
+                                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                                        Text("${navBackStackEntry?.destination?.route}")
+                                    })
+                            },
+                            sheetContent = {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    modifier = Modifier.padding(3.dp)
+                                ) {
+                                    ActionSheet(viewModel = viewModel)
+                                }
+                            }
+                        ) { padding ->
+                            Surface(
+                                modifier = Modifier
+                                    .padding(padding)
+                                    .fillMaxSize(),
+                                color = MaterialTheme.colorScheme.surface
+                            ) {
+                                NavHost(navController = navController, graph = navGraph)
+                            }
                         }
                     }
                 }

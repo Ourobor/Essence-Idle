@@ -1,6 +1,6 @@
-package com.ashe.essenceidle.model.task
+package com.ashe.essenceidle.model.action
 
-import com.ashe.essenceidle.model.data.CharacterState
+import com.ashe.essenceidle.model.database.CharacterState
 
 private const val totalAttributePenalty = 500.0
 private const val thisAttributePenalty = 2000.0

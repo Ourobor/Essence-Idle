@@ -1,4 +1,4 @@
-package com.ashe.essenceidle.model.data
+package com.ashe.essenceidle.model.database
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
@@ -12,13 +12,12 @@ import org.mongodb.kbson.ObjectId
 class CharacterState : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
-    var essenceStrength: Int = 0
+    var essenceStrength: Int = 10
     var speed: Int = 100
     var power: Int = 100
     var spirit: Int = 100
     var endurance: Int = 100
-    var soulForgeUnlocked: Boolean = false
-    var multipleActionsUnlocked: Boolean = false
+    var onboarded: Boolean = false
     var speedUnlocked: Boolean = false
     var powerUnlocked: Boolean = false
     var spiritUnlocked: Boolean = false
@@ -30,8 +29,7 @@ class CharacterState : RealmObject {
 
         newCharacterState._id = this._id
         newCharacterState.essenceStrength = this.essenceStrength
-        newCharacterState.soulForgeUnlocked = this.soulForgeUnlocked
-        newCharacterState.multipleActionsUnlocked = this.multipleActionsUnlocked
+        newCharacterState.onboarded = this.onboarded
         newCharacterState.speedUnlocked = this.speedUnlocked
         newCharacterState.powerUnlocked = this.powerUnlocked
         newCharacterState.spiritUnlocked = this.spiritUnlocked

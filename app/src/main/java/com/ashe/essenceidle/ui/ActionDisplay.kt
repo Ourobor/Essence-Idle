@@ -21,15 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.data.CharacterState
+import com.ashe.essenceidle.model.action.EnduranceTrainingAction
+import com.ashe.essenceidle.model.action.EssenceAction
+import com.ashe.essenceidle.model.action.MeditateEssenceAction
+import com.ashe.essenceidle.model.action.NoAction
+import com.ashe.essenceidle.model.action.PowerTrainingAction
+import com.ashe.essenceidle.model.action.SpeedTrainingAction
+import com.ashe.essenceidle.model.action.SpiritTrainingAction
+import com.ashe.essenceidle.model.database.CharacterState
 import com.ashe.essenceidle.model.maxActivities
-import com.ashe.essenceidle.model.task.SpeedTrainingAction
-import com.ashe.essenceidle.model.task.EnduranceTrainingAction
-import com.ashe.essenceidle.model.task.EssenceAction
-import com.ashe.essenceidle.model.task.MeditateEssenceAction
-import com.ashe.essenceidle.model.task.NoAction
-import com.ashe.essenceidle.model.task.PowerTrainingAction
-import com.ashe.essenceidle.model.task.SpiritTrainingAction
 import my.nanihadesuka.compose.LazyColumnScrollbar
 import my.nanihadesuka.compose.ScrollbarSettings
 
@@ -37,30 +37,25 @@ import my.nanihadesuka.compose.ScrollbarSettings
 fun ActionDisplay(essenceActions: MutableList<EssenceAction>, queueFunction: (EssenceAction) -> Unit,
                   characterState: CharacterState
 ) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        modifier = Modifier.padding(3.dp)
-    ) {
-        Column(modifier = Modifier.padding(10.dp)) {
-            Text(
-                text = "Action Engine(${essenceActions.size}/$maxActivities)",
-                modifier = Modifier.padding(vertical = 2.dp),
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 20.sp,
-            )
-            if(essenceActions.size > 0) essenceActions[0].Show()
-            else NoAction().Show()
-            HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-            ActionList(
-                queueFunction = queueFunction,
-                enabled = essenceActions.size >= maxActivities,
-                speedUnlocked = characterState.speedUnlocked,
-                powerUnlocked = characterState.powerUnlocked,
-                spiritUnlocked = characterState.spiritUnlocked,
-                enduranceUnlocked = characterState.enduranceUnlocked)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
-            EssenceActionsList(essenceActions = essenceActions)
-        }
+    Column(modifier = Modifier.padding(10.dp)) {
+        Text(
+            text = "Action Engine(${essenceActions.size}/$maxActivities)",
+            modifier = Modifier.padding(vertical = 2.dp),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 20.sp,
+        )
+        if(essenceActions.size > 0) essenceActions[0].Show()
+        else NoAction().Show()
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        ActionList(
+            queueFunction = queueFunction,
+            enabled = essenceActions.size >= maxActivities,
+            speedUnlocked = characterState.speedUnlocked,
+            powerUnlocked = characterState.powerUnlocked,
+            spiritUnlocked = characterState.spiritUnlocked,
+            enduranceUnlocked = characterState.enduranceUnlocked)
+        HorizontalDivider(modifier = Modifier.padding(vertical = 5.dp))
+        EssenceActionsList(essenceActions = essenceActions)
     }
 }
 
@@ -111,7 +106,9 @@ fun ActionList(queueFunction: (EssenceAction) -> Unit, enabled: Boolean = false,
                spiritUnlocked: Boolean,
                enduranceUnlocked: Boolean) {
 
-    FlowRow() {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         //list of all of the available actions to take
         Button(
             onClick = { queueFunction(MeditateEssenceAction()) },

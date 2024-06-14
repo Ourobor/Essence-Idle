@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.data.CharacterState
+import com.ashe.essenceidle.model.database.CharacterState
 
 abstract class SoulUnlock(
     val essenceCost: Int,
@@ -56,19 +56,6 @@ abstract class SoulUnlock(
                 }
             }
         }
-    }
-}
-
-class ActionEngineUnlock: SoulUnlock(essenceCost = 100, title = "Action Engine", description =
-"Unlock the ability to take more complicated actions and queue them.") {
-    override fun unlock(characterState: CharacterState): CharacterState {
-        val newCharacterState = super.unlock(characterState)
-        newCharacterState.multipleActionsUnlocked = true
-        return newCharacterState
-    }
-
-    override fun isUnlocked(characterState: CharacterState): Boolean {
-        return characterState.multipleActionsUnlocked
     }
 }
 
