@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.AccountCircle
+import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.Home
-import androidx.compose.material.icons.sharp.MailOutline
 import androidx.compose.material.icons.sharp.Menu
 import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.material3.BottomSheetScaffold
@@ -34,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -43,19 +45,22 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import com.ashe.essenceidle.model.MainActivityViewModel
 import com.ashe.essenceidle.model.database.CharacterState
-import com.ashe.essenceidle.ui.ActionSheet
+import com.ashe.essenceidle.ui.components.ActionSheet
 import com.ashe.essenceidle.ui.OnboardingSequence
 import com.ashe.essenceidle.ui.screens.ContactScreen
-import com.ashe.essenceidle.ui.screens.MainScreen
+import com.ashe.essenceidle.ui.screens.HomeScreen
+import com.ashe.essenceidle.ui.screens.SoulForge
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-enum class Screens() {
-    Home,
-    Contacts,
-    Settings
+enum class Screens(val icon: ImageVector) {
+    Home(Icons.Sharp.Home),
+    SoulForge(Icons.Sharp.Build),
+    Contacts(Icons.Sharp.AccountCircle),
+    Settings(Icons.Sharp.Settings)
+
 }
 
 class MainActivity : ComponentActivity() {
@@ -90,7 +95,8 @@ class MainActivity : ComponentActivity() {
             val characterState by viewModel.characterState.collectAsState()
 
             val navGraph = navController.createGraph(startDestination = Screens.Home.name) {
-                composable(Screens.Home.name) { MainScreen(viewModel) }
+                composable(Screens.Home.name) { HomeScreen(viewModel) }
+                composable(Screens.SoulForge.name) { SoulForge(characterState, viewModel::update, viewModel.unlocks) }
                 composable(Screens.Contacts.name) { ContactScreen() }
                 composable(Screens.Settings.name) { Text("Settings!") }
             }
@@ -104,75 +110,26 @@ class MainActivity : ComponentActivity() {
                         drawerContent = {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
                             ModalDrawerSheet {
-//                            IconToggleButton(
-//                                modifier = Modifier.padding(top = 8.dp, start = 8.dp),
-//                                checked = false,
-//                                onCheckedChange = {
-//                                    scope.launch {
-//                                        drawerState.apply {
-//                                            if (isClosed) open() else close()
-//                                        }
-//                                    }
-//                                }) {
-//                                Icon(
-//                                    imageVector = Icons.Sharp.Menu,
-//                                    contentDescription = "Menu"
-//                                )
-//                            }
-                                NavigationDrawerItem(
-                                    label = { Text("Home") },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Sharp.Home,
-                                            contentDescription = "Home"
-                                        )
-                                    },
-                                    selected = navBackStackEntry?.destination?.route == Screens.Home.name,
-                                    shape = RectangleShape,
-                                    onClick = {
-                                        navController.navigate(Screens.Home.name)
-                                        scope.launch {
-                                            drawerState.apply {
-                                                close()
+                                for (navEntry in Screens.entries){
+                                    NavigationDrawerItem(
+                                        label = { Text(navEntry.name) },
+                                        icon = {
+                                            Icon(
+                                                imageVector = navEntry.icon,
+                                                contentDescription = navEntry.name
+                                            )
+                                        },
+                                        selected = navBackStackEntry?.destination?.route == navEntry.name,
+                                        shape = RectangleShape,
+                                        onClick = {
+                                            navController.navigate(navEntry.name)
+                                            scope.launch {
+                                                drawerState.apply {
+                                                    close()
+                                                }
                                             }
-                                        }
-                                    })
-                                NavigationDrawerItem(
-                                    label = { Text("Contacts") },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Sharp.MailOutline,
-                                            contentDescription = "Contacts"
-                                        )
-                                    },
-                                    selected = navBackStackEntry?.destination?.route == Screens.Contacts.name,
-                                    shape = RectangleShape,
-                                    onClick = {
-                                        navController.navigate(Screens.Contacts.name)
-                                        scope.launch {
-                                            drawerState.apply {
-                                                close()
-                                            }
-                                        }
-                                    })
-                                NavigationDrawerItem(
-                                    label = { Text(Screens.Settings.name) },
-                                    icon = {
-                                        Icon(
-                                            imageVector = Icons.Sharp.Settings,
-                                            contentDescription = Screens.Settings.name
-                                        )
-                                    },
-                                    selected = navBackStackEntry?.destination?.route == Screens.Settings.name,
-                                    shape = RectangleShape,
-                                    onClick = {
-                                        navController.navigate(Screens.Settings.name)
-                                        scope.launch {
-                                            drawerState.apply {
-                                                close()
-                                            }
-                                        }
-                                    })
+                                        })
+                                }
                             }
                         }
                     ) {

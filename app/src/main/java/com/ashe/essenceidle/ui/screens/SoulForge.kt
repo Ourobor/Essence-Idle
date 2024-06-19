@@ -1,4 +1,4 @@
-package com.ashe.essenceidle.ui
+package com.ashe.essenceidle.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,8 +11,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ashe.essenceidle.model.database.CharacterState
 import com.ashe.essenceidle.model.SoulUnlock
+import com.ashe.essenceidle.model.database.CharacterState
 
 @Composable
 fun SoulForge(

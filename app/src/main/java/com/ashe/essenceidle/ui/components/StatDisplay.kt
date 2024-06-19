@@ -1,4 +1,4 @@
-package com.ashe.essenceidle.ui
+package com.ashe.essenceidle.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,7 @@ fun StatDisplay(essenceStrength: Int, speed: Int, power: Int, spirit: Int, endur
         Column(modifier = Modifier.padding(vertical = 10.dp)) {
             Text(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth().padding(bottom = 10.dp),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
@@ -36,34 +36,26 @@ fun StatDisplay(essenceStrength: Int, speed: Int, power: Int, spirit: Int, endur
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround) {
                 Column(horizontalAlignment = Alignment.End) {
-                    if (speedUnlocked) {
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            text = "Speed: ${speed / 100.0}"
-                        )
-                    }
+                    Text(
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = if(speedUnlocked) "Speed: ${speed / 100.0}" else "Speed: No data"
+                    )
 
-                    if (spiritUnlocked) {
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            text = "Spirit: ${spirit / 100.0}"
-                        )
-                    }
+                    Text(
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = if(spiritUnlocked) "Spirit: ${spirit / 100.0}" else "Spirit: No data"
+                    )
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    if (powerUnlocked) {
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            text = "Power: ${power / 100.0}"
-                        )
-                    }
+                    Text(
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = if(powerUnlocked) "Power: ${power / 100.0}" else "Power: No data"
+                    )
 
-                    if (enduranceUnlocked) {
-                        Text(
-                            color = MaterialTheme.colorScheme.primary,
-                            text = "Endurance: ${endurance / 100.0}"
-                        )
-                    }
+                    Text(
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = if(enduranceUnlocked) "Endurance: ${endurance / 100.0}" else "Endurance: No data"
+                    )
                 }
             }
         }

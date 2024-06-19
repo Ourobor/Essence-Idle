@@ -49,13 +49,15 @@ class MainActivityViewModel : ViewModel() {
             }
             else {
                 _characterState.value = items[0].copyFromRealm()
-//                update { val char = CharacterState(); char._id = _characterState.value._id;char}
-//                _characterState.value.speed = 100
-//                _characterState.value.power = 100
-//                _characterState.value.spirit = 100
-//                _characterState.value.endurance = 100
-                //_characterState.value.essenceStrength = 200
-//                _characterState.value.multipleActionsUnlocked = true
+                _characterState.value.powerUnlocked = true
+
+//                    update { val char = CharacterState(); char._id = _characterState.value._id;char}
+//                    _characterState.value.speed = 100
+//                    _characterState.value.power = 100
+//                    _characterState.value.spirit = 100
+//                    _characterState.value.endurance = 100
+//                    _characterState.value.essenceStrength = 200
+//                    _characterState.value.multipleActionsUnlocked = true
             }
         }
     }

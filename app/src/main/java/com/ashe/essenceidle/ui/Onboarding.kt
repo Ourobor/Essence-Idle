@@ -39,6 +39,7 @@ import androidx.navigation.createGraph
 import androidx.navigation.navArgument
 import com.ashe.essenceidle.R
 import com.ashe.essenceidle.model.MainActivityViewModel
+import com.ashe.essenceidle.ui.components.ActionSheet
 import kotlin.concurrent.schedule
 
 enum class Steps(val func : @Composable (viewModel: MainActivityViewModel, navController: NavController) -> Unit = {viewModel, navController -> }) {
@@ -93,7 +94,7 @@ enum class Steps(val func : @Composable (viewModel: MainActivityViewModel, navCo
                 fontSize = 15.sp,
                 textAlign = TextAlign.Start,
                 lineHeight = 20.sp,
-                text = "In order for Essence to interact with your soul, it needs to calibrate to your aura signature.\n \n Clear your mind, begin meditating and hit Next"
+                text = "In order for Essence to interact with your soul, it needs to calibrate to your aura signature.\n \nClear your mind, begin meditating and hit Next"
             )
 
             Spacer(modifier = Modifier.weight(0.9f))
@@ -179,7 +180,7 @@ enum class Steps(val func : @Composable (viewModel: MainActivityViewModel, navCo
                 fontSize = 15.sp,
                 textAlign = TextAlign.Start,
                 lineHeight = 20.sp,
-                text = "Now that Essence is attuned to your soul, let's test the connection. Give scheduled meditation a try!"
+                text = "Now that Essence is attuned to your soul, let's test the connection. Give guided meditation a try!"
             )
             if(characterState.essenceStrength < 40) {
                 Column(modifier = Modifier.padding(10.dp)){
