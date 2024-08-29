@@ -1,9 +1,12 @@
 package com.ashe.essenceidle.model
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ashe.essenceidle.model.action.EssenceAction
+import com.ashe.essenceidle.model.contact.ContactScript
+import com.ashe.essenceidle.model.contact.WatchfulRaven
 import com.ashe.essenceidle.model.database.CharacterState
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -26,10 +29,13 @@ class MainActivityViewModel : ViewModel() {
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
     //Realm database references
     private val charConfig = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
-        .schemaVersion(9).build()
+        .schemaVersion(14).build()
     private val realm: Realm = Realm.open(charConfig)
 
     val essenceActions = mutableStateListOf<EssenceAction>()
+    var contacts = mutableStateMapOf<String, ContactScript>(
+        Pair("WR", WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED)))
+    )
     var unlocks = mutableStateListOf<SoulUnlock>()
 
     init {
@@ -38,7 +44,6 @@ class MainActivityViewModel : ViewModel() {
         unlocks.add(SpiritUnlock())
         unlocks.add(EnduranceUnlock())
         viewModelScope.launch {
-
             val items: RealmResults<CharacterState> = realm.query<CharacterState>().find()
             if(items.size == 0){
                 realm.writeBlocking {

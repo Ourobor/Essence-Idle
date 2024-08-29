@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.AccountCircle
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.Home
+import androidx.compose.material.icons.sharp.MailOutline
 import androidx.compose.material.icons.sharp.Menu
 import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.material3.BottomSheetScaffold
@@ -45,22 +46,23 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import com.ashe.essenceidle.model.MainActivityViewModel
 import com.ashe.essenceidle.model.database.CharacterState
-import com.ashe.essenceidle.ui.components.ActionSheet
 import com.ashe.essenceidle.ui.OnboardingSequence
+import com.ashe.essenceidle.ui.components.ActionSheet
 import com.ashe.essenceidle.ui.screens.ContactScreen
 import com.ashe.essenceidle.ui.screens.HomeScreen
+import com.ashe.essenceidle.ui.screens.MessageScreen
 import com.ashe.essenceidle.ui.screens.SoulForge
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-enum class Screens(val icon: ImageVector) {
-    Home(Icons.Sharp.Home),
-    SoulForge(Icons.Sharp.Build),
-    Contacts(Icons.Sharp.AccountCircle),
-    Settings(Icons.Sharp.Settings)
-
+enum class Screens(val icon: ImageVector, val showInMenu: Boolean, val route: String) {
+    Home(Icons.Sharp.Home, true, "Home"),
+    SoulForge(Icons.Sharp.Build, true, "SoulForge"),
+    Contacts(Icons.Sharp.AccountCircle, true, "Contacts"),
+    Settings(Icons.Sharp.Settings, true, "Settings"),
+    Messages(Icons.Sharp.MailOutline, false, "Messages/{contactId}")
 }
 
 class MainActivity : ComponentActivity() {
@@ -95,10 +97,15 @@ class MainActivity : ComponentActivity() {
             val characterState by viewModel.characterState.collectAsState()
 
             val navGraph = navController.createGraph(startDestination = Screens.Home.name) {
-                composable(Screens.Home.name) { HomeScreen(viewModel) }
-                composable(Screens.SoulForge.name) { SoulForge(characterState, viewModel::update, viewModel.unlocks) }
-                composable(Screens.Contacts.name) { ContactScreen() }
-                composable(Screens.Settings.name) { Text("Settings!") }
+                composable(Screens.Home.route) { HomeScreen(viewModel) }
+                composable(Screens.SoulForge.route) { SoulForge(characterState, viewModel::update, viewModel.unlocks) }
+                composable(Screens.Contacts.route) { ContactScreen(navController, viewModel.contacts) }
+                composable(Screens.Settings.route) { Text("Settings!") }
+                composable(Screens.Messages.route){ backStackEntry ->
+                    MessageScreen(
+                        backStackEntry.arguments?.getString("contactId") ?: ""
+                    ,viewModel.contacts, characterState)
+                }
             }
             EssenceIdleTheme {
                 if (!characterState.onboarded) {
@@ -110,7 +117,7 @@ class MainActivity : ComponentActivity() {
                         drawerContent = {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
                             ModalDrawerSheet {
-                                for (navEntry in Screens.entries){
+                                for (navEntry in Screens.entries.filter { it.showInMenu }){
                                     NavigationDrawerItem(
                                         label = { Text(navEntry.name) },
                                         icon = {
@@ -171,7 +178,15 @@ class MainActivity : ComponentActivity() {
                                     },
                                     title = {
                                         val navBackStackEntry by navController.currentBackStackEntryAsState()
-                                        Text("${navBackStackEntry?.destination?.route}")
+                                        //TODO: Move this to a function or something
+                                        val title = when(navBackStackEntry?.destination?.route){
+                                            Screens.Messages.name + "/{contactId}" -> {
+                                                val id = navBackStackEntry?.arguments?.getString("contactId")
+                                                viewModel.contacts[id]?.fullName() ?: "Unknown User"
+                                            }
+                                            else -> navBackStackEntry?.destination?.route
+                                        }
+                                        Text("${title}")
                                     })
                             },
                             sheetContent = {
