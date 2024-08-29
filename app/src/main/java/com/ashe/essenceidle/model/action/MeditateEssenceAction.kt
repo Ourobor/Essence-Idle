@@ -12,6 +12,7 @@ class MeditateEssenceAction() : EssenceAction("Meditating...", "Meditate") {
 
     override fun executeAction(characterState: CharacterState){
         characterState.essenceStrength += meditateEssenceGain
+        characterState.totalEssenceCollected += meditateEssenceGain
     }
 
     override fun progress(): Float {

@@ -25,7 +25,7 @@ abstract class ContactScript(val previousSteps: List<ScriptStep>, val currentSte
      * @param step The next step
      * @return the new copied script
      */
-    abstract fun nextStep(step: ScriptStep): ContactScript
+    abstract fun takeStep(step: ScriptStep): ContactScript
 
     /**
      * Implement ScriptStep as an enum class within the concrete class to create the script steps
@@ -50,6 +50,14 @@ abstract class ContactScript(val previousSteps: List<ScriptStep>, val currentSte
          * @return A list of ChatMessage paired with the ScriptStep they lead to
          */
         fun chatOptions(): List<Pair<ChatMessage, ScriptStep>>
+
+        /**
+         * Returns the next logical ScriptStep for steps that don't have chatOptions. This is used
+         * for autonomous script updates that aren't relying on user input. You should implement
+         * /either/ chatOptions or nextStep, but not both.
+         * @return The next logical ScriptStep or null
+         */
+        fun nextStep(): ScriptStep?
     }
 
     fun fullName(): String {

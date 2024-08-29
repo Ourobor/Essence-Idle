@@ -29,12 +29,12 @@ class MainActivityViewModel : ViewModel() {
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
     //Realm database references
     private val charConfig = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
-        .schemaVersion(14).build()
+        .schemaVersion(15).build()
     private val realm: Realm = Realm.open(charConfig)
 
     val essenceActions = mutableStateListOf<EssenceAction>()
     var contacts = mutableStateMapOf<String, ContactScript>(
-        Pair("WR", WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED), WatchfulRaven.Steps.INTRODUCED))
+        Pair("WR", WatchfulRaven(listOf(), WatchfulRaven.Steps.UNINTRODUCED))
     )
     var unlocks = mutableStateListOf<SoulUnlock>()
 
@@ -83,6 +83,17 @@ class MainActivityViewModel : ViewModel() {
                     val newState = characterState.clone()
                     action.executeAction(newState)
                     return@update newState
+                }
+            }
+        }
+
+        //Update Contact state
+        for(contact in contacts){
+            val contactStep = contact.value.currentStep
+            if(contactStep.readyForProgression(characterState.value)){
+                val nextStep = contactStep.nextStep()
+                if(nextStep != null){
+                    contacts[contact.value.id] = contact.value.takeStep(nextStep)
                 }
             }
         }

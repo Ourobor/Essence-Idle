@@ -13,7 +13,7 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
         return currentStep != Steps.UNINTRODUCED
     }
 
-    override fun nextStep(step: ScriptStep): WatchfulRaven {
+    override fun takeStep(step: ScriptStep): WatchfulRaven {
         return WatchfulRaven(previousSteps = previousSteps + currentStep, step)
     }
 
@@ -25,42 +25,46 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
             }
 
             override fun readyForProgression(characterState: CharacterState): Boolean {
-                return false
+                return characterState.totalEssenceCollected >= 100
             }
 
             override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
                 return listOf()
+            }
+
+            override fun nextStep(): ScriptStep {
+                return INTRODUCED
             }
         },
         INTRODUCED{
             override fun getMessages(): List<ChatMessage> {
                 return listOf(
-                    ChatMessage(text = "HELLO I AM A BIRD CAW CAW", received = true),
-                    ChatMessage(text = "I TOO AM A BIRD CAW CAW", received = false),
-                    ChatMessage(
-                        text = "COOL WE SHOULD TEAM UP FOR MISCHIEF AND SHINY THINGS. ALSO WHAT " +
-                                "KIND OF BIRD ARE YOU? HONESTLY I'M JUST SAYING A LOT OF SHIT TO SEE IF " +
-                                "WORDWRAP WORKS", received = true
-                    )
+                    ChatMessage(text = "HELLO", received = true),
+                    ChatMessage(text = "I AM WATCHFUL RAVEN. WHO ARE YOU?", received = true),
                 )
             }
 
             override fun readyForProgression(characterState: CharacterState): Boolean {
-                return characterState.essenceStrength >= 300
+                return true
             }
 
             override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
                 return listOf(
-                    Pair(ChatMessage("I AM A CROW!", false), STAGETWO),
-                    Pair(ChatMessage("I AM A BLUEJAY!~", false), STAGETWOALT)
+                    Pair(ChatMessage("Nobody.", false), STAGETWO),
                 )
+            }
+
+            override fun nextStep(): ScriptStep? {
+                return null
             }
         },
         STAGETWO{
             override fun getMessages(): List<ChatMessage> {
                 return listOf(
-                    ChatMessage(text = "I AM A CROW!", received = false),
-                    ChatMessage(text = "FUCKING COOL", received = true)
+                    ChatMessage(text = "Nobody.", received = false),
+                    ChatMessage(text = "NO ONE IS NOBODY, NOBODY.", received = true),
+                    ChatMessage(text = "WHAT WILL YOU DO WITH POWER I WONDER?", received = true),
+                    ChatMessage(text = "I'LL BE IN TOUCH.", received = true)
                 )
             }
 
@@ -71,21 +75,9 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
             override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
                 return listOf()
             }
-        },
-        STAGETWOALT{
-            override fun getMessages(): List<ChatMessage> {
-                return listOf(
-                    ChatMessage(text = "I AM A BLUEJAY!~", received = false),
-                    ChatMessage(text = "FUCKING COOL", received = true)
-                )
-            }
 
-            override fun readyForProgression(characterState: CharacterState): Boolean {
-                return false
-            }
-
-            override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
-                return listOf()
+            override fun nextStep(): ScriptStep? {
+                return null
             }
         }
     }

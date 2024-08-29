@@ -13,6 +13,7 @@ class CharacterState : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId()
     var essenceStrength: Int = 10
+    var totalEssenceCollected: Int = 0
     var speed: Int = 100
     var power: Int = 100
     var spirit: Int = 100
@@ -29,6 +30,7 @@ class CharacterState : RealmObject {
 
         newCharacterState._id = this._id
         newCharacterState.essenceStrength = this.essenceStrength
+        newCharacterState.totalEssenceCollected = this.totalEssenceCollected
         newCharacterState.onboarded = this.onboarded
         newCharacterState.speedUnlocked = this.speedUnlocked
         newCharacterState.powerUnlocked = this.powerUnlocked

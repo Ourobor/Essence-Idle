@@ -55,7 +55,7 @@ fun MessageScreen(contactId: String, contacts: SnapshotStateMap<String, ContactS
             items(contactScript.currentStep.chatOptions()) { chatMessage ->
                 if(contactScript.currentStep.readyForProgression(characterState)) {
                     ChatItem(chatMessage.first) {
-                        val newScript = contactScript.nextStep(chatMessage.second)
+                        val newScript = contactScript.takeStep(chatMessage.second)
                         contacts[contactScript.id] = newScript
                     }
                 }
