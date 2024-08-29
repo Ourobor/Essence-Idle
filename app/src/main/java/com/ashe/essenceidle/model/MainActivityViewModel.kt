@@ -34,7 +34,7 @@ class MainActivityViewModel : ViewModel() {
 
     val essenceActions = mutableStateListOf<EssenceAction>()
     var contacts = mutableStateMapOf<String, ContactScript>(
-        Pair("WR", WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED)))
+        Pair("WR", WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED), WatchfulRaven.Steps.INTRODUCED))
     )
     var unlocks = mutableStateListOf<SoulUnlock>()
 

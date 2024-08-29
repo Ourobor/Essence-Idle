@@ -1,14 +1,13 @@
 package com.ashe.essenceidle.model.contact
 
+import androidx.compose.runtime.Immutable
 import com.ashe.essenceidle.model.database.CharacterState
 
-//TODO: change constructors to make sense. nextStep would benefit from an empty constructor
-abstract class ContactScript(val previousSteps: List<ScriptStep>) {
+@Immutable
+abstract class ContactScript(val previousSteps: List<ScriptStep>, val currentStep: ScriptStep) {
     abstract val contactFirstName: String
     abstract val contactLastName: String
     abstract val id: String
-    //This is left abstract so each each concrete ContactScript can define its own default step
-    abstract var currentStep: ScriptStep
 
     /**
      * Should this contact be visible to the player
@@ -16,6 +15,16 @@ abstract class ContactScript(val previousSteps: List<ScriptStep>) {
      */
     abstract fun showContact(): Boolean
 
+    /*
+    * TODO: Check if there's a better way to hoist this duplicated functionality here instead of
+    *  relying on the concrete classes to basically do the exact same thing, just substituting their
+    *  class constructor
+     */
+    /**
+     * Create a copy of this ContractScript but stepped forward by given step.
+     * @param step The next step
+     * @return the new copied script
+     */
     abstract fun nextStep(step: ScriptStep): ContactScript
 
     /**

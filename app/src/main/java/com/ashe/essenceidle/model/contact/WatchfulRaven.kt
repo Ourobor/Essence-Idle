@@ -3,19 +3,18 @@ package com.ashe.essenceidle.model.contact
 import androidx.compose.runtime.Immutable
 import com.ashe.essenceidle.model.database.CharacterState
 
-class WatchfulRaven(previousSteps: List<ScriptStep>) : ContactScript(previousSteps) {
+class WatchfulRaven(previousSteps: List<ScriptStep>,
+                    currentStep: ScriptStep = Steps.UNINTRODUCED
+) : ContactScript(previousSteps, currentStep) {
     override val id: String = "WR"
     override val contactFirstName: String = "Watchful"
     override val contactLastName: String = "Raven"
-    override var currentStep: ScriptStep = Steps.INTRODUCED
     override fun showContact(): Boolean {
         return currentStep != Steps.UNINTRODUCED
     }
 
     override fun nextStep(step: ScriptStep): WatchfulRaven {
-        val newContact = WatchfulRaven(previousSteps = previousSteps + currentStep)
-        newContact.currentStep = step
-        return newContact
+        return WatchfulRaven(previousSteps = previousSteps + currentStep, step)
     }
 
     @Immutable
@@ -52,7 +51,8 @@ class WatchfulRaven(previousSteps: List<ScriptStep>) : ContactScript(previousSte
 
             override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
                 return listOf(
-                    Pair(ChatMessage("I AM A CROW!", false), STAGETWO )
+                    Pair(ChatMessage("I AM A CROW!", false), STAGETWO),
+                    Pair(ChatMessage("I AM A BLUEJAY!~", false), STAGETWOALT)
                 )
             }
         },
@@ -71,6 +71,22 @@ class WatchfulRaven(previousSteps: List<ScriptStep>) : ContactScript(previousSte
             override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
                 return listOf()
             }
-        };
+        },
+        STAGETWOALT{
+            override fun getMessages(): List<ChatMessage> {
+                return listOf(
+                    ChatMessage(text = "I AM A BLUEJAY!~", received = false),
+                    ChatMessage(text = "FUCKING COOL", received = true)
+                )
+            }
+
+            override fun readyForProgression(characterState: CharacterState): Boolean {
+                return false
+            }
+
+            override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
+                return listOf()
+            }
+        }
     }
 }
