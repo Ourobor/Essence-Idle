@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ashe.essenceidle.R
 import com.ashe.essenceidle.model.MainActivityViewModel
-import com.ashe.essenceidle.model.contact.WatchfulRaven
 import com.ashe.essenceidle.ui.components.StatDisplay
 
 @Composable
@@ -50,17 +49,14 @@ fun HomeScreen(viewModel: MainActivityViewModel){
             Column {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     Text(
-                        if(viewModel.contacts["WR"]?.currentStep == WatchfulRaven.Steps.INTRODUCED ||
-                            viewModel.contacts["WR"]?.currentStep == WatchfulRaven.Steps.UNINTRODUCED)
-                            "Unknown User" else
-                                "Nobody, Basic User"
-                        , fontSize = 18.sp)
+                        MainActivityViewModel.Flags.getUserName(viewModel.contacts),
+                        fontSize = 18.sp)
                     Spacer(modifier = Modifier.weight(1f))
                     val painter = painterResource(R.drawable.mixedrainandsunweather)
                     Icon(painter, modifier = Modifier.size(25.dp), contentDescription = "Warning")
                     Text("99°", fontSize = 18.sp)
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text("Corning, New York", fontSize = 18.sp)
+                    Text("Ithaca, New York", fontSize = 18.sp)
                 }
             }
         }

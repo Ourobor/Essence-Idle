@@ -131,5 +131,22 @@ class MainActivityViewModel : ViewModel() {
             }
         }
     }
+    object Flags {
+        fun getUserName(contacts: Map<String, ContactScript>): String {
+            val step = contacts["WR"]?.currentStep
+            return when (step) {
+                WatchfulRaven.Steps.STAGETWO -> "Nobody, Basic user"
+                else -> "Unknown User"
+            }
+        }
+
+        fun soulForgeUnlocked(contacts: Map<String, ContactScript>): Boolean{
+            val step = contacts["WR"]?.currentStep
+            return when (step){
+                WatchfulRaven.Steps.UNINTRODUCED, WatchfulRaven.Steps.INTRODUCED -> false
+                else -> true
+            }
+        }
+    }
 
 }
