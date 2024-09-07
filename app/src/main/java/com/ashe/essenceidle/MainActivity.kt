@@ -57,12 +57,12 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-enum class Screens(val icon: ImageVector, val showInMenu: Boolean, val route: String) {
-    Home(Icons.Sharp.Home, true, "Home"),
-    SoulForge(Icons.Sharp.Build, true, "SoulForge"),
-    Contacts(Icons.Sharp.AccountCircle, true, "Contacts"),
-    Settings(Icons.Sharp.Settings, true, "Settings"),
-    Messages(Icons.Sharp.MailOutline, false, "Messages/{contactId}")
+enum class Screens(val icon: ImageVector, val showInMenu: (viewModel: MainActivityViewModel) -> Boolean, val route: String) {
+    Home(Icons.Sharp.Home, { true }, "Home"),
+    SoulForge(Icons.Sharp.Build, { viewModel -> MainActivityViewModel.Flags.soulForgeUnlocked(viewModel.contacts) }, "SoulForge"),
+    Contacts(Icons.Sharp.AccountCircle, { true }, "Contacts"),
+    Settings(Icons.Sharp.Settings, { true}, "Settings"),
+    Messages(Icons.Sharp.MailOutline, { false}, "Messages/{contactId}")
 }
 
 class MainActivity : ComponentActivity() {
@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
                         drawerContent = {
                             val navBackStackEntry by navController.currentBackStackEntryAsState()
                             ModalDrawerSheet {
-                                for (navEntry in Screens.entries.filter { it.showInMenu }){
+                                for (navEntry in Screens.entries.filter { it.showInMenu(viewModel) }){
                                     NavigationDrawerItem(
                                         label = { Text(navEntry.name) },
                                         icon = {

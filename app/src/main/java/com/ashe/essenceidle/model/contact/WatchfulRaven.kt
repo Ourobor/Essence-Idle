@@ -63,7 +63,7 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
                 return listOf(
                     ChatMessage(text = "Nobody.", received = false),
                     ChatMessage(text = "NO ONE IS NOBODY, NOBODY.", received = true),
-                    ChatMessage(text = "WHAT WILL YOU DO WITH POWER I WONDER?", received = true),
+                    ChatMessage(text = "WHAT WILL YOU DO WITH POWER I WONDER? CHECK YOUR APP FOR THE SOUL FORGE.", received = true),
                     ChatMessage(text = "I'LL BE IN TOUCH.", received = true)
                 )
             }

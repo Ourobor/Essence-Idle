@@ -70,6 +70,12 @@ class MainActivityViewModel : ViewModel() {
                     }
                 }
 
+                /*
+                    Debugging Overrides, I'm leaving them commented 'cuz it's easier to uncomment and
+                    modify than write them from scratch every time
+                 */
+
+//                contacts["WR"] = WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED), WatchfulRaven.Steps.INTRODUCED)
 
 //                    update { val char = CharacterState(); char._id = _characterState.value._id;char}
 //                    _characterState.value.speed = 100
