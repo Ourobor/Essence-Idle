@@ -1,5 +1,6 @@
 package com.ashe.essenceidle.model
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
@@ -8,11 +9,13 @@ import com.ashe.essenceidle.model.action.EssenceAction
 import com.ashe.essenceidle.model.contact.ContactScript
 import com.ashe.essenceidle.model.contact.WatchfulRaven
 import com.ashe.essenceidle.model.database.CharacterState
+import com.ashe.essenceidle.model.database.ContactRecord
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.copyFromRealm
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.query.RealmResults
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,11 +31,13 @@ class MainActivityViewModel : ViewModel() {
     private val _characterState = MutableStateFlow(CharacterState())
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
     //Realm database references
-    private val charConfig = RealmConfiguration.Builder(schema = setOf(CharacterState::class))
-        .schemaVersion(15).build()
+    private val charConfig = RealmConfiguration.Builder(schema = setOf(CharacterState::class, ContactRecord::class))
+        .schemaVersion(18).build()
     private val realm: Realm = Realm.open(charConfig)
 
     val essenceActions = mutableStateListOf<EssenceAction>()
+    //Default Contacts go here. These will be overwritten in the init method if there is contact
+    //data in the database
     var contacts = mutableStateMapOf<String, ContactScript>(
         Pair("WR", WatchfulRaven(listOf(), WatchfulRaven.Steps.UNINTRODUCED))
     )
@@ -54,7 +59,17 @@ class MainActivityViewModel : ViewModel() {
             }
             else {
                 _characterState.value = items[0].copyFromRealm()
-                _characterState.value.powerUnlocked = true
+
+                //unpack contacts
+                Log.d("EssIdle","Beginning Contact Unpacking")
+                for(contactRecord in _characterState.value._contacts){
+                    val newContact = createContact(contactRecord)
+                    if(newContact != null) {
+                        Log.d("EssIdle", "New Contact Registered: ${newContact.id}, Currently: ${newContact.currentStep}, Previously: ${newContact.previousSteps}")
+                        contacts[newContact.id] = newContact
+                    }
+                }
+
 
 //                    update { val char = CharacterState(); char._id = _characterState.value._id;char}
 //                    _characterState.value.speed = 100
@@ -127,6 +142,16 @@ class MainActivityViewModel : ViewModel() {
     fun save(): Job {
         return viewModelScope.launch {
             _characterState.collectLatest { characterState ->
+                //read contacts and put them into the character State
+                for (contact in contacts){
+                    //ensure contacts list is empty
+                    characterState._contacts = realmListOf()
+
+                    characterState._contacts.add(
+                        ContactRecord(contact.value.id,
+                            contact.value.currentStep.toString(),
+                            contact.value.previousSteps))
+                }
                 realm.writeBlocking {copyToRealm(characterState.apply { }, UpdatePolicy.ALL) }
             }
         }
