@@ -69,6 +69,27 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
             }
 
             override fun readyForProgression(characterState: CharacterState): Boolean {
+                return (characterState.enduranceUnlocked && characterState.powerUnlocked &&
+                        characterState.speedUnlocked && characterState.spiritUnlocked)
+            }
+
+            override fun chatOptions(): List<Pair<ChatMessage, ScriptStep>> {
+                return listOf()
+            }
+
+            override fun nextStep(): ScriptStep {
+                return RITUALINTRODUCTION
+            }
+        },
+        RITUALINTRODUCTION{
+            override fun getMessages(): List<ChatMessage> {
+                return listOf(
+                    ChatMessage(text = "NOBODY. YOU'VE BEEN BUSY. I'M PLEASED.", received = true),
+                    ChatMessage(text = "CHECK YOUR APP. I UNLOCKED REMOTE RITUAL RIGHTS FOR YOUR USER.", received = true)
+                )
+            }
+
+            override fun readyForProgression(characterState: CharacterState): Boolean {
                 return false
             }
 
@@ -79,6 +100,7 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
             override fun nextStep(): ScriptStep? {
                 return null
             }
+
         }
     }
 }

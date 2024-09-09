@@ -165,17 +165,39 @@ class MainActivityViewModel : ViewModel() {
     object Flags {
         fun getUserName(contacts: Map<String, ContactScript>): String {
             val step = contacts["WR"]?.currentStep
-            return when (step) {
-                WatchfulRaven.Steps.STAGETWO -> "Nobody, Basic user"
-                else -> "Unknown User"
+            return if(step is WatchfulRaven.Steps) {
+                when (step) {
+                    WatchfulRaven.Steps.UNINTRODUCED, WatchfulRaven.Steps.INTRODUCED -> "Unknown User"
+                    WatchfulRaven.Steps.STAGETWO, WatchfulRaven.Steps.RITUALINTRODUCTION -> "Nobody, Basic user"
+                }
+            } else {
+                "Error, Unknown User"
             }
         }
 
-        fun soulForgeUnlocked(contacts: Map<String, ContactScript>): Boolean{
+        fun soulForgeUnlocked(contacts: Map<String, ContactScript>): Boolean {
             val step = contacts["WR"]?.currentStep
-            return when (step){
-                WatchfulRaven.Steps.UNINTRODUCED, WatchfulRaven.Steps.INTRODUCED -> false
-                else -> true
+            return if (step is WatchfulRaven.Steps) {
+                when (step) {
+                    WatchfulRaven.Steps.UNINTRODUCED, WatchfulRaven.Steps.INTRODUCED -> false
+                    else -> true
+                }
+            }
+            else{
+                false
+            }
+        }
+
+        fun ritualUnlocked(contacts: Map<String, ContactScript>): Boolean{
+            val step = contacts["WR"]?.currentStep
+            return if (step is WatchfulRaven.Steps) {
+                when (step) {
+                    WatchfulRaven.Steps.UNINTRODUCED, WatchfulRaven.Steps.INTRODUCED, WatchfulRaven.Steps.STAGETWO -> false
+                    WatchfulRaven.Steps.RITUALINTRODUCTION -> true
+                }
+            }
+            else{
+                false
             }
         }
     }

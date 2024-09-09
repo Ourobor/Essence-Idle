@@ -14,6 +14,7 @@ import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.MailOutline
 import androidx.compose.material.icons.sharp.Menu
+import androidx.compose.material.icons.sharp.Refresh
 import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
@@ -51,6 +52,7 @@ import com.ashe.essenceidle.ui.components.ActionSheet
 import com.ashe.essenceidle.ui.screens.ContactScreen
 import com.ashe.essenceidle.ui.screens.HomeScreen
 import com.ashe.essenceidle.ui.screens.MessageScreen
+import com.ashe.essenceidle.ui.screens.RitualScreen
 import com.ashe.essenceidle.ui.screens.SoulForge
 import com.ashe.essenceidle.ui.theme.EssenceIdleTheme
 import kotlinx.coroutines.launch
@@ -60,6 +62,7 @@ import java.util.concurrent.TimeUnit
 enum class Screens(val icon: ImageVector, val showInMenu: (viewModel: MainActivityViewModel) -> Boolean, val route: String) {
     Home(Icons.Sharp.Home, { true }, "Home"),
     SoulForge(Icons.Sharp.Build, { viewModel -> MainActivityViewModel.Flags.soulForgeUnlocked(viewModel.contacts) }, "SoulForge"),
+    Ritual(Icons.Sharp.Refresh, { viewModel -> MainActivityViewModel.Flags.ritualUnlocked(viewModel.contacts) }, "Ritual"),
     Contacts(Icons.Sharp.AccountCircle, { true }, "Contacts"),
     Settings(Icons.Sharp.Settings, { true}, "Settings"),
     Messages(Icons.Sharp.MailOutline, { false}, "Messages/{contactId}")
@@ -106,6 +109,7 @@ class MainActivity : ComponentActivity() {
                         backStackEntry.arguments?.getString("contactId") ?: ""
                     ,viewModel.contacts, characterState)
                 }
+                composable(Screens.Ritual.route) { RitualScreen() }
             }
             EssenceIdleTheme {
                 if (!characterState.onboarded) {
