@@ -25,11 +25,18 @@ import com.ashe.essenceidle.model.database.CharacterState
 
 @Composable
 fun MessageScreen(contactId: String, contacts: SnapshotStateMap<String, ContactScript>, characterState: CharacterState){
-    val contactScript = contacts[contactId]
+    var contactScript = contacts[contactId]
     if(contactScript == null){
         Text("User Not Found:$contactId")
     }
     else {
+        //if the current script is unread
+        if(contactScript.unread){
+            //create a new copy of the script that is read
+            contactScript = contactScript.newCopy(unread = false)
+            //update the contacts array
+            contacts[contactId] = contactScript
+        }
         LazyColumn(
             modifier = Modifier.padding(top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -55,7 +62,7 @@ fun MessageScreen(contactId: String, contacts: SnapshotStateMap<String, ContactS
             items(contactScript.currentStep.chatOptions()) { chatMessage ->
                 if(contactScript.currentStep.readyForProgression(characterState)) {
                     ChatItem(chatMessage.first) {
-                        val newScript = contactScript.takeStep(chatMessage.second)
+                        val newScript = contactScript.newStep(chatMessage.second, false)
                         contacts[contactScript.id] = newScript
                     }
                 }

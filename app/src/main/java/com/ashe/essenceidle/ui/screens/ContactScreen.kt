@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.AccountCircle
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -54,7 +56,15 @@ fun ContactScreen(navController: NavHostController, contacts: SnapshotStateMap<S
                     colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                     headlineContent = { Text(contact.contactFirstName + " " + contact.contactLastName) },
                     leadingContent = {
-                        Icon(Icons.Sharp.AccountCircle, contentDescription = "Picture")
+                        BadgedBox(badge = {
+                            if(contact.unread) {
+                                Badge()
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Sharp.AccountCircle,
+                                contentDescription = "Picture")
+                        }
                     },
                     modifier = Modifier.clickable {
                         navController.navigate("Messages/" + contact.id)

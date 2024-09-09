@@ -9,7 +9,8 @@ fun createContact(contactRecord: ContactRecord): ContactScript?{
         "WR" -> {
             return WatchfulRaven(
                 contactRecord.previousSteps.map { WatchfulRaven.Steps.valueOf(it) },
-                WatchfulRaven.Steps.valueOf(contactRecord.currectStepId))
+                WatchfulRaven.Steps.valueOf(contactRecord.currentStepId),
+                contactRecord.unread)
         }
         else -> null
     }

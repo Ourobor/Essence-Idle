@@ -16,6 +16,8 @@ import androidx.compose.material.icons.sharp.MailOutline
 import androidx.compose.material.icons.sharp.Menu
 import androidx.compose.material.icons.sharp.Refresh
 import androidx.compose.material.icons.sharp.Settings
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -99,6 +101,13 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val characterState by viewModel.characterState.collectAsState()
 
+            var unreadMessages = 0
+            for(contactScript in viewModel.contacts){
+                if (contactScript.value.unread){
+                    unreadMessages += 1
+                }
+            }
+
             val navGraph = navController.createGraph(startDestination = Screens.Home.name) {
                 composable(Screens.Home.route) { HomeScreen(viewModel) }
                 composable(Screens.SoulForge.route) { SoulForge(characterState, viewModel::update, viewModel.unlocks) }
@@ -125,10 +134,24 @@ class MainActivity : ComponentActivity() {
                                     NavigationDrawerItem(
                                         label = { Text(navEntry.name) },
                                         icon = {
-                                            Icon(
-                                                imageVector = navEntry.icon,
-                                                contentDescription = navEntry.name
-                                            )
+                                            if(navEntry == Screens.Contacts){
+                                                BadgedBox(badge = {
+                                                    if(unreadMessages > 0) {
+                                                        Badge()
+                                                    }
+                                                }) {
+                                                    Icon(
+                                                        imageVector = navEntry.icon,
+                                                        contentDescription = navEntry.name
+                                                    )
+                                                }
+                                            }
+                                            else {
+                                                Icon(
+                                                    imageVector = navEntry.icon,
+                                                    contentDescription = navEntry.name
+                                                )
+                                            }
                                         },
                                         selected = navBackStackEntry?.destination?.route == navEntry.name,
                                         shape = RectangleShape,
@@ -167,6 +190,7 @@ class MainActivity : ComponentActivity() {
                                     navigationIcon = {
                                         IconToggleButton(
                                             checked = false,
+                                            modifier = Modifier.width(50.dp),//Sure whatever. Larger size prevents badge from clipping
                                             onCheckedChange = {
                                                 scope.launch {
                                                     drawerState.apply {
@@ -174,10 +198,18 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                             }) {
-                                            Icon(
-                                                imageVector = Icons.Sharp.Menu,
-                                                contentDescription = "Menu"
-                                            )
+                                            BadgedBox(badge = {
+                                                if(unreadMessages > 0) {
+                                                    Badge(){
+                                                        Text(unreadMessages.toString())
+                                                    }
+                                                }
+                                            }) {
+                                                Icon(
+                                                    imageVector = Icons.Sharp.Menu,
+                                                    contentDescription = "Menu"
+                                                )
+                                            }
                                         }
                                     },
                                     title = {

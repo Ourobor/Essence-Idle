@@ -57,13 +57,18 @@ class CharacterState : RealmObject {
 
 class ContactRecord(): EmbeddedRealmObject{
     var contactId: String = ""
-    var currectStepId: String = ""
+    var currentStepId: String = ""
     var previousSteps: RealmList<String> = realmListOf()
-    constructor(contactId: String, currectStepId: String, previousSteps: List<ContactScript.ScriptStep>) : this() {
+    var unread: Boolean = false
+    constructor(contactId: String,
+                currectStepId: String,
+                previousSteps: List<ContactScript.ScriptStep>,
+                unread: Boolean) : this() {
         this.contactId = contactId
-        this.currectStepId = currectStepId
+        this.currentStepId = currectStepId
         for(step in previousSteps) {
             this.previousSteps.add(step.toString())
         }
+        this.unread = unread
     }
 }

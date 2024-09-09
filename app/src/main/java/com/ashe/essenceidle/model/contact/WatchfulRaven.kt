@@ -4,8 +4,9 @@ import androidx.compose.runtime.Immutable
 import com.ashe.essenceidle.model.database.CharacterState
 
 class WatchfulRaven(previousSteps: List<ScriptStep>,
-                    currentStep: ScriptStep = Steps.UNINTRODUCED
-) : ContactScript(previousSteps, currentStep) {
+                    currentStep: ScriptStep = Steps.UNINTRODUCED,
+                    unread: Boolean = false
+) : ContactScript(previousSteps, currentStep, unread) {
     override val id: String = "WR"
     override val contactFirstName: String = "Watchful"
     override val contactLastName: String = "Raven"
@@ -13,9 +14,18 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
         return currentStep != Steps.UNINTRODUCED
     }
 
-    override fun takeStep(step: ScriptStep): WatchfulRaven {
-        return WatchfulRaven(previousSteps = previousSteps + currentStep, step)
+    override fun newCopy(
+        step: ScriptStep?,
+        previousSteps: List<ScriptStep>?,
+        unread: Boolean?
+    ): ContactScript {
+        return WatchfulRaven(previousSteps = previousSteps ?: this.previousSteps, step ?: this.currentStep, unread ?: this.unread)
     }
+
+
+//    override fun newStep(step: ScriptStep, unread: Boolean): WatchfulRaven {
+//        return WatchfulRaven(previousSteps = previousSteps + currentStep, step, unread)
+//    }
 
     @Immutable
     enum class Steps: ScriptStep {
@@ -85,7 +95,7 @@ class WatchfulRaven(previousSteps: List<ScriptStep>,
             override fun getMessages(): List<ChatMessage> {
                 return listOf(
                     ChatMessage(text = "NOBODY. YOU'VE BEEN BUSY. I'M PLEASED.", received = true),
-                    ChatMessage(text = "CHECK YOUR APP. I UNLOCKED REMOTE RITUAL RIGHTS FOR YOUR USER.", received = true)
+                    ChatMessage(text = "CHECK YOUR APP. I UNLOCKED REMOTE RITUAL RIGHTS FOR YOU", received = true)
                 )
             }
 

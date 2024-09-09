@@ -32,7 +32,7 @@ class MainActivityViewModel : ViewModel() {
     val characterState: StateFlow<CharacterState> = _characterState.asStateFlow()
     //Realm database references
     private val charConfig = RealmConfiguration.Builder(schema = setOf(CharacterState::class, ContactRecord::class))
-        .schemaVersion(18).build()
+        .schemaVersion(19).build()
     private val realm: Realm = Realm.open(charConfig)
 
     val essenceActions = mutableStateListOf<EssenceAction>()
@@ -75,7 +75,7 @@ class MainActivityViewModel : ViewModel() {
                     modify than write them from scratch every time
                  */
 
-//                contacts["WR"] = WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED), WatchfulRaven.Steps.INTRODUCED)
+//                contacts["WR"] = WatchfulRaven(listOf(WatchfulRaven.Steps.UNINTRODUCED, WatchfulRaven.Steps.INTRODUCED), WatchfulRaven.Steps.STAGETWO)
 
 //                    update { val char = CharacterState(); char._id = _characterState.value._id;char}
 //                    _characterState.value.speed = 100
@@ -114,7 +114,7 @@ class MainActivityViewModel : ViewModel() {
             if(contactStep.readyForProgression(characterState.value)){
                 val nextStep = contactStep.nextStep()
                 if(nextStep != null){
-                    contacts[contact.value.id] = contact.value.takeStep(nextStep)
+                    contacts[contact.value.id] = contact.value.newStep(nextStep, true)
                 }
             }
         }
@@ -156,12 +156,14 @@ class MainActivityViewModel : ViewModel() {
                     characterState._contacts.add(
                         ContactRecord(contact.value.id,
                             contact.value.currentStep.toString(),
-                            contact.value.previousSteps))
+                            contact.value.previousSteps,
+                            contact.value.unread))
                 }
                 realm.writeBlocking {copyToRealm(characterState.apply { }, UpdatePolicy.ALL) }
             }
         }
     }
+
     object Flags {
         fun getUserName(contacts: Map<String, ContactScript>): String {
             val step = contacts["WR"]?.currentStep
@@ -201,5 +203,4 @@ class MainActivityViewModel : ViewModel() {
             }
         }
     }
-
 }

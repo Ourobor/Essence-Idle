@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.ashe.essenceidle.model.database.CharacterState
 
 @Immutable
-abstract class ContactScript(val previousSteps: List<ScriptStep>, val currentStep: ScriptStep) {
+abstract class ContactScript(val previousSteps: List<ScriptStep>, val currentStep: ScriptStep, var unread:Boolean) {
     abstract val contactFirstName: String
     abstract val contactLastName: String
     abstract val id: String
@@ -15,17 +15,29 @@ abstract class ContactScript(val previousSteps: List<ScriptStep>, val currentSte
      */
     abstract fun showContact(): Boolean
 
+    /**
+     * Create a copy of this ContractScript but stepped forward by given step.
+     * @param step The next step
+     * @param unread true if this contact script should be marked as unread
+     * @return the new copied script
+     */
+    fun newStep(step: ScriptStep, unread: Boolean): ContactScript {
+        return newCopy(previousSteps = previousSteps + currentStep, step = step, unread = unread)
+    }
+
     /*
     * TODO: Check if there's a better way to hoist this duplicated functionality here instead of
     *  relying on the concrete classes to basically do the exact same thing, just substituting their
     *  class constructor
      */
     /**
-     * Create a copy of this ContractScript but stepped forward by given step.
+     * Create a copy of this ContractScript, optionally with modified values
      * @param step The next step
+     * @param previousSteps previous contact script steps for message history
+     * @param unread true if this contact script should be marked as unread
      * @return the new copied script
      */
-    abstract fun takeStep(step: ScriptStep): ContactScript
+    abstract fun newCopy(step: ScriptStep? = null, previousSteps: List<ScriptStep>? = null, unread: Boolean?): ContactScript
 
     /**
      * Implement ScriptStep as an enum class within the concrete class to create the script steps
